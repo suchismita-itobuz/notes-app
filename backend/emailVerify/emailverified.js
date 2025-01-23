@@ -20,3 +20,5 @@ export const verifyEmail = async (req, res) => {
         }
     });
 };
+
+//verify with email and token both

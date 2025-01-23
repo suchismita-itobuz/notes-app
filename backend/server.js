@@ -12,13 +12,6 @@ app.use("/notes", route)
 
 const port = process.env.PORT;
 
-let updatedToken;
-
-
-app.get("/", (req, res) => {
-    res.send("hello")
-})
-
 app.listen(port, () => {
     try {
         console.log(`Server is running on ${port}`);
