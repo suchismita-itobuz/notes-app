@@ -1,6 +1,6 @@
 import express from "express";
 import { createUser, loginUser } from "../controllers/userController.js";
-import { verifyEmail } from "../emailVerify/emailVerified.js";
+import { verifyEmail } from "../middleware/tokenVerify.js"
 const route = express.Router();
 
 route.post("/create", createUser);
