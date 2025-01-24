@@ -8,7 +8,7 @@ const app = express()
 dotenv.config({ path: ".env" })
 
 app.use(express.json())
-app.use("/notes", route)
+app.use("/user", route)
 
 const port = process.env.PORT;
 
