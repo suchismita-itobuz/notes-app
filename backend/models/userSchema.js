@@ -23,3 +23,17 @@ const newSchema = new mongoose.Schema({
 
 export default mongoose.model("User_details", newSchema);
 
+
+const noteSchema = new mongoose.Schema({
+    title:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    body:{
+        type:String
+    }
+})
+
+export const notes = mongoose.model("notes",noteSchema);
+

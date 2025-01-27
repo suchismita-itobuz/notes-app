@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 
 
 const mailConfigurations = {
-    from: 'suchis2002mita@gmail.com',
+    from: `${process.env.SENDER_EMAIL}`,
 
     to: `${email}`,
 

@@ -1,42 +1,47 @@
 import User_details from "../models/userSchema.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { sendEmail } from "../emailVerify/verifyEmail.js";
 
-import dotenv from "dotenv";
+import dotenv from "dotenv/config";
 
-dotenv.config({path:".env"});
+// dotenv.config({path:".env"});
 
 let loginUserDetails = null;
 
 export const createUser = async (req, res) => {
     try {
-        const token = jwt.sign({
-            data: 'Token Data'
-        }, process.env.MY_SECRET_KEY, { expiresIn: '10m' }
-        );
 
         const { email, password } = req.body;
 
-        const userData = await User_details.create({ email, password, token });
+        const userData = await User_details.create({ email, password });
+      
 
         //hashing password
-        const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(userData.password, salt);
+       
+        const hash = await bcrypt.hash(password,10)
+        
         userData.password = hash;
+        
         await userData.save();
+      
 
+        const userID = userData._id
+        const token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
+        userData.token = token;
+        await userData.save();
+        
+        
         res.status(200).json({
             success: true,
             message: "User profile created",
             data: userData,
         })
+        
         //send email
-    
         sendEmail(email,token)
     }
     catch (error) {
-       
         res.status(404).json({
             success: false,
             message: "User profile was not created",
