@@ -16,6 +16,9 @@ const newSchema = new mongoose.Schema({
     verified: {
         type: Boolean,
         default: false
+    },
+    access_token: {
+        type:String
     }
 
 })
@@ -32,7 +35,12 @@ const noteSchema = new mongoose.Schema({
     },
     body:{
         type:String
-    }
+    },
+    // userId:{
+    //     // type:Schema.Types.ObjectId,
+    //     ref:newSchema,
+    //     required:true
+    // }
 })
 
 export const notes = mongoose.model("notes",noteSchema);
