@@ -78,9 +78,10 @@ export const loginUser = async (req, res) => {
             //generation of access token
             const userID = loginUserDetails._id;
             // console.log(userID)
-            const access_token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '10000m' });
+            const access_token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '1s' });
             loginUserDetails.access_token = access_token;
             await loginUserDetails.save()
+            // res.send({token:access_token})
             
         }
         else {
