@@ -1,5 +1,6 @@
 import express from "express";
-import route from "./routes/userRoute.js";
+import userRoute from "./routes/userRoute.js";
+import noteRoute from "./routes/noteRoute.js";
 import dbConnect from "./config/dbConnection.js";
 import dotenv from "dotenv";
 
@@ -8,8 +9,8 @@ const app = express()
 
 
 app.use(express.json())
-app.use("/user", route)
-app.use("/notes",route)
+app.use("/user", userRoute)
+app.use("/notes",noteRoute)
 
 const port = process.env.PORT;
 

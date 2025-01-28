@@ -8,7 +8,8 @@ const newSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select:false
     },
     token: {
         type: String,
@@ -23,25 +24,24 @@ const newSchema = new mongoose.Schema({
 
 })
 
-
 export default mongoose.model("User_details", newSchema);
 
 
-const noteSchema = new mongoose.Schema({
-    title:{
-        type:String,
-        required:true,
-        unique:true
-    },
-    body:{
-        type:String
-    },
-    // userId:{
-    //     // type:Schema.Types.ObjectId,
-    //     ref:newSchema,
-    //     required:true
-    // }
-})
+// const noteSchema = new mongoose.Schema({
+//     title:{
+//         type:String,
+//         required:true,
+//         unique:true
+//     },
+//     body:{
+//         type:String
+//     },
+//     userId:{
+//         type:mongoose.Schema.Types.ObjectId,
+//         ref:User_details,
+//         required:true
+//     }
+// })
 
-export const notes = mongoose.model("notes",noteSchema);
+// export const notes = mongoose.model("notes",noteSchema);
 
