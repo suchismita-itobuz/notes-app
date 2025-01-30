@@ -1,4 +1,5 @@
 import User_details from "../models/userSchema.js";
+import session from "../models/sessionSchema.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendEmail } from "../emailVerify/verifyEmail.js";
@@ -56,7 +57,7 @@ export const loginUser = async (req, res) => {
     //email verification
     try{
     loginUserDetails = await User_details.findOne({ email: `${email}` },{password:1,email:1,verified:1}).exec();
-    console.log("details during login",loginUserDetails);
+    
     if(loginUserDetails===null){
         throw Error;
     }
@@ -68,24 +69,33 @@ export const loginUser = async (req, res) => {
             message:"Authentication unsuccessful"
         })
     }
-    // console.log("1    ", loginUserDetails.password)
+    
     if (loginUserDetails) {
         if (bcrypt.compareSync(password, loginUserDetails.password) && loginUserDetails.verified === true) {
+            const userID = loginUserDetails._id;
+
+            //generation of access token AND refresh token
+            const token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '1s' });
+            const refresh_token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '10h' });
+
+            loginUserDetails.access_token = token;
+            loginUserDetails.refresh_token = refresh_token;
+
+            await loginUserDetails.save()
+
             res.status(200).json({
                 success: true,
+                data: {"token":token,
+                    "refresh_token":refresh_token},
                 message: "You are logged in successfully",
             })
-            //generation of access token
-            const userID = loginUserDetails._id;
-            // console.log(userID)
-            const access_token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '1s' });
-            loginUserDetails.access_token = access_token;
-            await loginUserDetails.save()
-            // res.send({token:access_token})
+
+            //session creation
+            await session.create({userId:`${userID}`});
+
             
         }
         else {
-            // console.log("hi")
             res.status(404).json({
                 success: false,
                 // message: "Wrong password"
@@ -93,7 +103,6 @@ export const loginUser = async (req, res) => {
             })
         }
     }
-
 }
 
 

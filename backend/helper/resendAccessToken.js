@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
 
-export const verifyAuthorisation = async(req,res,next) => {
-    //from headers take in the auth token and decode 
+export const resendAccessToken = async(req,res) => {
     const authHeader = req.headers.authorization;
-    // console.log(authHeader)
     if (authHeader && authHeader.startsWith("Bearer")) {
         const token = authHeader.split(" ")[1]
         console.log("token", token)
@@ -11,20 +9,28 @@ export const verifyAuthorisation = async(req,res,next) => {
             if(error.message==="jwt expired"){
                 res.status(403).json({
                     success:false,
-                    message:"Token has expired"
+                    message:"Refresh Token has expired"
                 })
             }
             // elif(error.message===jwt token invalid??) ----->HANDLE CASE!!
             else{ 
-                req.id = decoded.userID
-                next()
+                console.log(decoded)
+                userid = decoded.userID
+                //send access token to user
+                const token = jwt.sign({userid}, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
+                res.status(200).json({
+                    success:true,
+                    data:{token},
+                    message:"Refresh token is sent"
+                })
             }
         });
     }
-    else{
+    else {
         res.status(404).json({
             success: false,
-            message: "Token wasn't present in headers",
+            // message: "Wrong password"
+            message:"Token wasn't present in header"
         })
     }
-};
+}

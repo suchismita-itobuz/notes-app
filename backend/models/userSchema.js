@@ -20,6 +20,9 @@ const newSchema = new mongoose.Schema({
     },
     access_token: {
         type:String
+    },
+    refresh_token: {
+        type:String
     }
 
 })
