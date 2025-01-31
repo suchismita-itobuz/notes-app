@@ -11,6 +11,7 @@ const app = express()
 app.use(express.json())
 app.use("/user", userRoute)
 app.use("/notes",noteRoute)
+app.use('/uploads', express.static('uploads'));
 
 const port = process.env.PORT;
 

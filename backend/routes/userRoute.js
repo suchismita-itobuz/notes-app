@@ -14,4 +14,5 @@ userRoute.post("/login",validate(user_validation_schema_login),loginUser);
 userRoute.get("/verify", verifyEmail);
 userRoute.get("/logout",verifyAuthorisation,logout)
 
+
 export default userRoute;

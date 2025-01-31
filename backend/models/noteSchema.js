@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { string } from 'yup';
 
 
 const noteSchema = new mongoose.Schema({
@@ -13,6 +14,10 @@ const noteSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User_details",
         // required:true
+    },
+    filePath:{
+        type:String,
+        default:""
     }
 
 }, {timestamps:true})
