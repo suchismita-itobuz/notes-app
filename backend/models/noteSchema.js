@@ -9,7 +9,7 @@ const noteSchema = new mongoose.Schema({
     content:{
         type:String
     },
-    userId:{
+    userID:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User_details",
         // required:true

@@ -75,14 +75,22 @@ export const loginUser = async (req, res) => {
             const userID = loginUserDetails._id;
 
             //generation of access token AND refresh token
-            const token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '1s' });
-            const refresh_token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '10h' });
+            const token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
+            const refresh_token = jwt.sign({userID}, process.env.MY_SECRET_KEY, { expiresIn: '30d' });
 
-            loginUserDetails.access_token = token;
-            loginUserDetails.refresh_token = refresh_token;
+            // loginUserDetails.access_token = token;
+            // loginUserDetails.refresh_token = refresh_token;
 
             await loginUserDetails.save()
 
+            const is_session_active = await session.findOne({userID:`${userID}`})
+            
+            try{
+                if(is_session_active){
+                throw Error;
+            }
+            else{
+            await session.create({userID:`${userID}`});
             res.status(200).json({
                 success: true,
                 data: {"token":token,
@@ -90,10 +98,16 @@ export const loginUser = async (req, res) => {
                 message: "You are logged in successfully",
             })
 
-            //session creation
-            await session.create({userId:`${userID}`});
+            }
 
-            
+            }
+            catch(error){
+                res.status(404).json({
+                    success:false,
+                    message:"You are already logged in"
+                })
+            }
+
         }
         else {
             res.status(404).json({
@@ -104,6 +118,54 @@ export const loginUser = async (req, res) => {
         }
     }
 }
+
+
+//user logout 
+
+export const logout = async(req,res) => {
+        try {
+            const userID = req.id
+            try{
+                const flag = await session.findOne({userID:`${userID}`})
+                if (flag === null){
+                    throw Error
+                }
+                else{
+                    await session.deleteOne({userID})
+                    res.status(200).json({
+                        success: true,
+                        message: "You are logged out."
+                    })
+                   
+                }
+    
+            }
+            catch(error){
+                console.log(error)
+                res.status(403).json({
+                    success: false,
+                    message: "You are already logged out."
+                })
+            }
+            
+        }
+        catch (error) {
+            // console.log(error.message)
+            if (error && error.message === "jwt expired") {
+                res.status(403).json({
+                    success: false,
+                    message: "Token is expired"
+                })
+            }
+            else(error && error.message === "invalid signature") 
+                res.status(401).json({
+                    success: false,
+                    message: "Token is invalid"
+                })
+            
+        }
+    }
+
 
 
 

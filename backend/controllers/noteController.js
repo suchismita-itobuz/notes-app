@@ -4,7 +4,7 @@ import notes from "../models/noteSchema.js"
 export const createNote = async (req, res) => {
     try { 
         const { title, content } = req.body;
-        const note = await notes.create({title,content,userId:`${req.id}`})
+        const note = await notes.create({title,content,userID:`${req.id}`})
         // console.log(note)  
 
         res.status(200).json({
@@ -15,7 +15,7 @@ export const createNote = async (req, res) => {
     }
 
     catch(error){
-        // console.log(error)
+        console.log(error)
         res.status(404).json({
             success:false,
             message:"note was not created",
@@ -27,7 +27,7 @@ export const createNote = async (req, res) => {
 //Show all notes
 export const showNote = async (req, res) => {
     try {
-        const note = await notes.find({userId:`${req.id}`});
+        const note = await notes.find({userID:`${req.id}`});
         res.status(200).json({
             data: note
         })
@@ -43,7 +43,7 @@ export const showNote = async (req, res) => {
 export const showNoteById = async (req, res) => {
     try {
         const note_id = req.params.id;
-        const note = await notes.find({userId:`${req.id}`,_id:note_id});
+        const note = await notes.find({userID:`${req.id}`,_id:note_id});
         res.status(200).json({
             data: note
         })
@@ -63,7 +63,7 @@ export const showNoteById = async (req, res) => {
 export const deleteNote = async (req, res) => {
     try {
         const note_id = req.params.id;
-        const note = await notes.deleteOne({userId:`${req.id}`,_id:note_id});
+        const note = await notes.deleteOne({userID:`${req.id}`,_id:note_id});
         res.status(200).json({
             message:"Notes deleted successfully"
         })
@@ -83,7 +83,7 @@ export const updateNote = async (req, res) => {
     try {
         const note_id = req.params.id;
         const {title,content} = req.body;
-        const note = await notes.findOne({userId:`${req.id}`,_id:note_id});
+        const note = await notes.findOne({userID:`${req.id}`,_id:note_id});
         console.log("note",note);
         note.title = title;
         note.content = content;

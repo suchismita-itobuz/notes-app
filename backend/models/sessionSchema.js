@@ -1,7 +1,7 @@
 import mongoose, {Schema} from 'mongoose';
 
 const sessionSchema = new mongoose.Schema({
-    userId:{
+    userID:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User_details",
         required:true
