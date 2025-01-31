@@ -24,10 +24,12 @@ export const createNote = async (req, res) => {
 
 }
 
-//Show all notes
+//Show all notes and pagination as well 
 export const showSortedNote = async (req, res) => {
     try {
         const {sortBy} = req.query
+        const {pageNum} = req.query //starts from 0 cuz otherwise if it starts from 1 the first ${displayedEntries} will be skipped
+        const displayedEntries = 2
         // console.log(sortBy)
         let sortCriteria = {}
         if (sortBy === "asc"){
@@ -39,7 +41,7 @@ export const showSortedNote = async (req, res) => {
         else{
             sortCriteria = {title: "asc"}
         }
-        const note = await notes.find({userID:`${req.id}`}).sort(sortCriteria);
+        const note = await notes.find({userID:`${req.id}`}).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries);
         res.status(200).json({
             data: note
         })
