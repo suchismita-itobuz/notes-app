@@ -25,7 +25,7 @@ export const verifyAuthorisation = async (req, res, next) => {
                 next()
             }
             catch(error){
-                res.status(403).json({
+                return res.status(403).json({
                     success: false,
                     message: "You are not logged in. Please log in."
                 })
@@ -35,13 +35,13 @@ export const verifyAuthorisation = async (req, res, next) => {
         catch (error) {
             // console.log(error.message)
             if (error && error.message === "jwt expired") {
-                res.status(403).json({
+                return res.status(403).json({
                     success: false,
                     message: "Token has expired {API is called from where it is resent}"
                 })
             }
             else(error && error.message === "invalid signature") 
-                res.status(401).json({
+                return res.status(401).json({
                     success: false,
                     message: "Token is invalid"
                 })
@@ -50,7 +50,7 @@ export const verifyAuthorisation = async (req, res, next) => {
 
     }
     else {
-        res.status(404).json({
+        return res.status(404).json({
         success: false,
         message: "Token wasn't present in headers",
     })

@@ -14,7 +14,8 @@ const noteSchema = new mongoose.Schema({
         ref:"User_details",
         // required:true
     }
-})
+
+}, {timestamps:true})
 
 // export const notes = mongoose.model("notes",noteSchema);
 export default mongoose.model("notes", noteSchema);

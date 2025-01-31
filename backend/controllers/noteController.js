@@ -25,9 +25,21 @@ export const createNote = async (req, res) => {
 }
 
 //Show all notes
-export const showNote = async (req, res) => {
+export const showSortedNote = async (req, res) => {
     try {
-        const note = await notes.find({userID:`${req.id}`});
+        const {sortBy} = req.query
+        // console.log(sortBy)
+        let sortCriteria = {}
+        if (sortBy === "asc"){
+            sortCriteria = {createdAt: "asc"}
+        }
+        else if(sortBy === "desc"){
+            sortCriteria = {createdAt: "desc"}
+        }
+        else{
+            sortCriteria = {title: "asc"}
+        }
+        const note = await notes.find({userID:`${req.id}`}).sort(sortCriteria);
         res.status(200).json({
             data: note
         })
@@ -121,3 +133,4 @@ export const searchNote = async(req,res) => {
         })
     }
 }
+
