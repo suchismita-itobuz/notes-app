@@ -99,3 +99,25 @@ export const updateNote = async (req, res) => {
         })
     }
 }
+
+
+
+//search note by title 
+
+export const searchNote = async(req,res) => {
+    const {search_query} = req.body
+    console.log(search_query)
+    const note = await notes.find({userID:req.id,title:{ "$regex": search_query, "$options": "i" }})
+    if(note){
+        res.status(200).json({
+            success:true,
+            data:note
+        })
+    }
+    else{
+        res.status(200).json({
+            success:true,
+            message:"No notes exist in the record"
+        })
+    }
+}
