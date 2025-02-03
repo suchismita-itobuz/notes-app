@@ -1,44 +1,53 @@
 import nodemailer from "nodemailer"
 import dotenv from "dotenv";
+import hbs from "nodemailer-express-handlebars"
+import path from "path";
 
-dotenv.config({path:".env"});
+dotenv.config({ path: ".env" });
 
-export const sendEmail = async (email,token) => {
-try {
-    console.log("verify",email);
-    
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.SENDER_EMAIL,
-        pass: process.env.SENDER_PWD
+
+
+export const sendEmail = async (email, token, fname) => {
+    try {
+        console.log("verify", email);
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.SENDER_EMAIL,
+                pass: process.env.SENDER_PWD
+            }
+        });
+
+        const handlebarOptions = {
+            viewEngine: {
+                extname: ".handlebars",
+                partialsDir: path.resolve("./views/emailTemplates"),
+                defaultLayout: false,
+            },
+            //   viewPath: path.resolve("./views/emailTemplates"),
+            viewPath: "/Users/macbookair/Desktop/Suchismita/javascript/notes-app/backend/views/emailTemplates",
+            extName: ".handlebars",
+        };
+
+
+        transporter.use("compile", hbs(handlebarOptions));
+
+        const verificationLink = `http://localhost:4000/notes/verify/${token}`
+
+
+        transporter.sendMail({
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: "Verify Your Email",
+            template: "verificationEmail",
+            context: {
+                fname: fname,
+                verificationLink,
+            },
+        })
     }
-});
-
-
-const mailConfigurations = {
-    from: `${process.env.SENDER_EMAIL}`,
-
-    to: `${email}`,
-
-    subject: 'Email Verification',
-
-    text: `Hi! There, You have recently visited 
-           our website and entered your email.
-           Please follow the given link to verify your email
-           http://localhost:4000/notes/verify/${token} 
-           Thanks`
-};
-
-transporter.sendMail(mailConfigurations, function (error, info) {
-    if (error) throw Error(error);
-    console.log('Email Sent Successfully');
-    console.log(info);
-});
-}
-
-catch(error){
-    console.log(error)
-}
-
+    catch (error) {
+        console.log(error)
+    }
 }

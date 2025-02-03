@@ -23,7 +23,7 @@ export const uploadNotes = async(req,res) => {
     const Note = await noteSchema.findById(id)
     if(Note)
     {
-        Note.filePath = "http://localhost:4000/uploads/" + req.file.filename;
+        Note.filePath = `http://localhost:4000/uploads/` + req.file.filename;
         await Note.save();
         return res.status(200).json({
             success:true,

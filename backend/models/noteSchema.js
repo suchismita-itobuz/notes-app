@@ -1,26 +1,24 @@
-import mongoose, { Schema } from 'mongoose';
-import { string } from 'yup';
-
+import mongoose from 'mongoose';
 
 const noteSchema = new mongoose.Schema({
-    title:{
-        type:String,
-        required:true
+    title: {
+        type: String,
+        required: true
     },
-    content:{
-        type:String
+    content: {
+        type: String
     },
-    userID:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User_details",
+    userID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User_details",
         // required:true
     },
-    filePath:{
-        type:String,
-        default:""
+    filePath: {
+        type: String,
+        default: ""
     }
 
-}, {timestamps:true})
+}, { timestamps: true })
 
 // export const notes = mongoose.model("notes",noteSchema);
 export default mongoose.model("notes", noteSchema);

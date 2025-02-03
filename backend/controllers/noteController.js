@@ -47,6 +47,7 @@ export const showSortedNote = async (req, res) => {
         })
     }
     catch (error) {
+        // console.log(error)
         res.status(404).json({
             message: "Cannot fetch data",
         })
@@ -77,7 +78,7 @@ export const showNoteById = async (req, res) => {
 export const deleteNote = async (req, res) => {
     try {
         const note_id = req.params.id;
-        const note = await notes.deleteOne({userID:`${req.id}`,_id:note_id});
+        await notes.deleteOne({userID:`${req.id}`,_id:note_id});
         res.status(200).json({
             message:"Notes deleted successfully"
         })

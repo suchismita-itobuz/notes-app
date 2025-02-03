@@ -11,11 +11,11 @@ export const verifyEmail = async (req, res) => {
     if (authHeader && authHeader.startsWith("Bearer")) {
         const token = authHeader.split(" ")[1]
         // console.log("token",token);
-        jwt.verify(token, `${process.env.MY_SECRET_KEY}`, async (err, decoded) => {
-            if(err){
-                console.log("token is invalid or expired")
+        jwt.verify(token, `${process.env.MY_SECRET_KEY}`, async (err) => {
+            if (err) {
+                console.log(err)
             }
-            else{
+            else {
                 console.log("token is correct")
                 const userData = await User_details.findOne({ token: `${token}` });
                 userData.token = "";
@@ -24,7 +24,7 @@ export const verifyEmail = async (req, res) => {
             }
         });
     }
-    else{
+    else {
         res.status(404).json({
             success: false,
             message: "Token wasn't present in headers",
@@ -33,38 +33,4 @@ export const verifyEmail = async (req, res) => {
 };
 
 
-// export const randomFunc = async (req, res) => {
-//          const { token } = req.params;
-//         jwt.verify(token, `${process.env.MY_SECRET_KEY}`, async (err, decoded) => {
-//             if (err) {
-//                 console.log(err);
-//                 res.send("Email verification failed, possibly the link is invalid or expired");
-//             }
-//             else {
-//                 res.send("Email verified successfully");
-//                 console.log("server", token);
-//                 const userData = await User_details.findOne({ token: `${token}` });
-//                 userData.token = "";
-//                 userData.verified = true;
-//                 await userData.save();
-//             }
-//         });
-//     };
 
-// const { token } = req.params;
-
-// jwt.verify(token, `${process.env.MY_SECRET_KEY}`, async (err, decoded)=> {
-//     if (err) {
-//         console.log(err);
-//         res.send("Email verification failed, possibly the link is invalid or expired");
-//     }
-//     else {
-//         res.send("Email verified successfully");
-//         console.log("server", token);
-//         const userData = await User_details.findOne({ token: `${token}` });
-//         userData.token = "";
-//         userData.verified = true;
-//         await userData.save();
-//     }
-// });
-//verify with email and token both

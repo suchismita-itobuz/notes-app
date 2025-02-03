@@ -2,7 +2,6 @@ import express from "express";
 import userRoute from "./routes/userRoute.js";
 import noteRoute from "./routes/noteRoute.js";
 import dbConnect from "./config/dbConnection.js";
-import dotenv from "dotenv";
 
 
 const app = express()
@@ -14,8 +13,9 @@ app.use("/notes",noteRoute)
 app.use('/uploads', express.static('uploads'));
 
 const port = process.env.PORT;
+// console.log(port)
 
-app.listen(port, () => {
+app.listen(port, (req,res) => {
     try {
         console.log(`Server is running on ${port}`);
     }

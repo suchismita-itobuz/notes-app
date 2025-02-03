@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
-dotenv.config({path:".env"})
+dotenv.config();
 
 const url = process.env.URL;
 
@@ -14,5 +14,6 @@ async function dbConnect() {
             console.log(Error);
         })
 }
+
 
 export default dbConnect;
