@@ -4,6 +4,10 @@ import userSchema from "../models/userSchema.js";
 import noteSchema from "../models/noteSchema.js";
 import bcrypt from "bcrypt";
 
+dotenv.config({ path: ".env" });
+import dotenv from "dotenv";
+const url = env.process.URL
+
 
 async function dbConnect() {
     await mongoose.connect("mongodb://suchismita:4321@localhost:4001/notesApp?authSource=admin")
