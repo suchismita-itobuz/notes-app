@@ -1,16 +1,19 @@
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { faker } from "@faker-js/faker";
+dotenv.config({ path: ".env" });
+
+
 import userSchema from "../models/userSchema.js";
 import noteSchema from "../models/noteSchema.js";
 import bcrypt from "bcrypt";
 
-dotenv.config({ path: ".env" });
-import dotenv from "dotenv";
-const url = env.process.URL
+const url = process.env.URL
+console.log(url)
 
 
 async function dbConnect() {
-    await mongoose.connect("mongodb://suchismita:4321@localhost:4001/notesApp?authSource=admin")
+    await mongoose.connect(url)
         .then(() => {
             console.log("Mongodb connected");
         }).
@@ -61,10 +64,10 @@ const seedNotes = async () => {
 
 seedUser().then(() => {
     console.log("Successfully Created Users");
-    //   mongoose.connection.close();
+    mongoose.disconnect()
 });
 
 seedNotes().then(() => {
     console.log("Successfully Created Notes");
-    // mongoose.connection.close();
+    mongoose.disconnect()
 });
