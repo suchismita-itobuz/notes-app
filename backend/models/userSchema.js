@@ -15,9 +15,6 @@ const newSchema = new mongoose.Schema({
         required: true,
         select:false
     },
-    token: {
-        type: String,
-    },
     verified: {
         type: Boolean,
         default: false

@@ -24,14 +24,13 @@ export const createUser = async (req, res) => {
 
         const userID = userData._id
         const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
-        userData.token = token;
         await userData.save();
 
 
         res.status(200).json({
             success: true,
             message: "User profile created",
-            data: userData._id,
+            data: {verification_token:token},
         })
 
         //send email

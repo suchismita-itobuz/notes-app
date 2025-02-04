@@ -11,16 +11,21 @@ export const verifyEmail = async (req, res) => {
     if (authHeader && authHeader.startsWith("Bearer")) {
         const token = authHeader.split(" ")[1]
         // console.log("token",token);
-        jwt.verify(token, `${process.env.MY_SECRET_KEY}`, async (err) => {
+        // let decoded = jwt.verify(token, `${process.env.MY_SECRET_KEY}`)
+        jwt.verify(token, `${process.env.MY_SECRET_KEY}`, async (err,decoded) => {
             if (err) {
                 console.log(err)
             }
             else {
-                console.log("token is correct")
-                const userData = await User_details.findOne({ token: `${token}` });
-                userData.token = "";
+                console.log("token is correct",decoded)
+                const userID = decoded.userID
+                const userData = await User_details.findOne({ _id: `${userID}` });
                 userData.verified = true;
-                await userData.save();
+                res.status(200).json({
+                    message:"success"
+                })
+                return await userData.save();
+
             }
         });
     }
