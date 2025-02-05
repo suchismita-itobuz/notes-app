@@ -45,7 +45,7 @@ const seedDatabase = async () => {
         console.log("Successfully Created Users");
 
         // Seed Notes
-        const newNotes = generateNotes(b);
+        const newNotes = generateNotes(10);
         await noteSchema.deleteMany({});
         await noteSchema.insertMany(newNotes);
         console.log("Successfully Created Notes");

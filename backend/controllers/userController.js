@@ -37,7 +37,7 @@ export const createUser = async (req, res) => {
         sendEmail(email, token, fname)
     }
     catch (error) {
-        res.status(404).json({
+        res.status(401).json({
             success: false,
             message: "User profile was not created",
         })

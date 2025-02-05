@@ -2,10 +2,13 @@ import express from "express";
 import userRoute from "./routes/userRoute.js";
 import noteRoute from "./routes/noteRoute.js";
 import dbConnect from "./config/dbConnection.js";
+import cors from "cors"
 
 
 const app = express()
 
+
+app.use(cors())
 
 app.use(express.json())
 app.use("/user", userRoute)
