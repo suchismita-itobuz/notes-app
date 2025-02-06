@@ -12,7 +12,7 @@ export default function App() {
         <div className='bg-[#FEF0D7] min-h-screen flex flex-col'>
           <BrowserRouter>
           <Routes>
-            <Route path='/navbar' element= {<Navbar/>} />
+            <Route path='/' element= {<><Navbar/><Signup/></>}></Route>
         </Routes>
         </BrowserRouter>
         </div>
