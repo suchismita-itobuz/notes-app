@@ -6,10 +6,23 @@ import { sendEmail } from "../emailVerify/verifyEmail.js";
 
 let loginUserDetails = null;
 
+
 export const createUser = async (req, res) => {
     try {
 
         const { email, password, fname } = req.body;
+
+        try{
+            const is_existing_user = await User_details.findOne({email})
+            if (is_existing_user) {throw new Error("user already exists")}
+        }
+        catch(error){
+            console.log("error",error);
+            return res.status(400).json({
+                success:false,
+                message:"user already exists"
+            })
+        }
 
         const userData = await User_details.create({ email, password, fname });
 
@@ -37,6 +50,8 @@ export const createUser = async (req, res) => {
         sendEmail(email, token, fname)
     }
     catch (error) {
+        console.log(error);
+        
         res.status(401).json({
             success: false,
             message: "User profile was not created",

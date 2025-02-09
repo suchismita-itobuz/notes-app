@@ -9,7 +9,7 @@ dotenv.config({ path: ".env" });
 
 export const sendEmail = async (email, token, fname) => {
     try {
-        console.log("verify", email);
+        // console.log("verify", email);
 
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -25,8 +25,8 @@ export const sendEmail = async (email, token, fname) => {
                 partialsDir: path.resolve("./views/emailTemplates"),
                 defaultLayout: false,
             },
-            //   viewPath: path.resolve("./views/emailTemplates"),
-            viewPath: "/Users/macbookair/Desktop/Suchismita/javascript/notes-app/backend/views/emailTemplates",
+              viewPath: path.resolve("./views/emailTemplates"),
+            // viewPath: "/Users/macbookair/Desktop/Suchismita/javascript/notes-app/backend/views/emailTemplates",
             extName: ".handlebars",
         };
 
