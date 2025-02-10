@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { user_validation_schema } from "../../validation/dataValidation";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Link } from "react-router-dom";
 
 export default function Signup() {
   function ErrorsName() {
@@ -135,7 +136,7 @@ export default function Signup() {
         <Does_User_Exist error={userExistError} />
         <div className="flex justify-center">
           <h7>
-            Are you an existing user ?<a className="text-blue-600 cursor-pointer"> Log in</a>
+            Are you an existing user ?<Link to="/login" className="text-blue-600 cursor-pointer"> Log in</Link>
           </h7>
         </div>
       </form>

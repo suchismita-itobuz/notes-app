@@ -11,7 +11,7 @@ export const user_validation_schema = yup.object({
 })
 
 export const user_validation_schema_login = yup.object({
-    email: yup.string().trim().required("Email is required").email("Invalid email format").test("has .com", 'Invalid email format,missed ".com"', (value) => value.includes(".com"))
+    email: yup.string().trim().required("Email is required").email("Invalid email format")
 })
 
 

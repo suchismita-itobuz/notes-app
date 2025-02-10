@@ -12,15 +12,15 @@ export const createUser = async (req, res) => {
 
         const { email, password, fname } = req.body;
 
-        try{
-            const is_existing_user = await User_details.findOne({email})
-            if (is_existing_user) {throw new Error("user already exists")}
+        try {
+            const is_existing_user = await User_details.findOne({ email })
+            if (is_existing_user) { throw new Error("user already exists") }
         }
-        catch(error){
-            console.log("error",error);
+        catch (error) {
+            console.log("error", error);
             return res.status(400).json({
-                success:false,
-                message:"user already exists"
+                success: false,
+                message: "user already exists"
             })
         }
 
@@ -36,14 +36,14 @@ export const createUser = async (req, res) => {
 
 
         const userID = userData._id
-        const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '1s' });
+        const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
         await userData.save();
 
 
         res.status(200).json({
             success: true,
             message: "User profile created",
-            data: {verification_token:token},
+            data: { verification_token: token },
         })
 
         //send email
@@ -51,7 +51,7 @@ export const createUser = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        
+
         res.status(401).json({
             success: false,
             message: "User profile was not created",
@@ -82,53 +82,93 @@ export const loginUser = async (req, res) => {
     }
 
     if (loginUserDetails) {
-        if (bcrypt.compareSync(password, loginUserDetails.password) && loginUserDetails.verified === true) {
-            const userID = loginUserDetails._id;
+        //     if (bcrypt.compareSync(password, loginUserDetails.password) && loginUserDetails.verified === true) {
+        //         const userID = loginUserDetails._id;
 
-            //generation of access token AND refresh token
-            const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
-            const refresh_token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '30d' });
+        //         //generation of access token AND refresh token
+        //         const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
+        //         const refresh_token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '30d' });
 
-            await loginUserDetails.save()
+        //         await loginUserDetails.save()
 
-            const is_session_active = await session.findOne({ userID: `${userID}` })
+        //         const is_session_active = await session.findOne({ userID: `${userID}` })
 
-            try {
-                if (is_session_active) {
-                    throw Error;
-                }
-                else {
-                    await session.create({ userID: `${userID}` });
-                    res.status(200).json({
-                        success: true,
-                        data: {
-                            "token": token,
-                            "refresh_token": refresh_token
-                        },
-                        message: "You are logged in successfully",
-                    })
+        //         try {
+        //             if (is_session_active) {
+        //                 throw Error;
+        //             }
+        //             else {
+        //                 await session.create({ userID: `${userID}` });
+        //                 res.status(200).json({
+        //                     success: true,
+        //                     data: {
+        //                         "token": token,
+        //                         "refresh_token": refresh_token
+        //                     },
+        //                     message: "You are logged in successfully",
+        //                 })
 
-                }
+        //             }
 
+        //         }
+        //         catch (error) {
+        //             res.status(404).json({
+        //                 success: false,
+        //                 message: "You are already logged in"
+        //             })
+        //         }
+
+        //     }
+        //     else {
+        //         res.status(404).json({
+        //             success: false,
+        //             // message: "Wrong password"
+        //             message: "Authentication unsuccessful"
+        //         })
+        //     }
+        // }
+
+        try {
+            if (!bcrypt.compareSync(password, loginUserDetails.password)) {
+                throw new Error("password wrong")
             }
-            catch (error) {
-                res.status(404).json({
-                    success: false,
-                    message: "You are already logged in"
+            else if (loginUserDetails.verified === false) {
+                throw new Error("unverified")
+            }
+            else {
+                //login successful
+            }
+        }
+        catch (error) {
+            console.log(error)
+            if (error === "Error: password wrong") {
+                console.log(error)
+                return res.status(401).json({
+                    message: "pwd wrong",
+                    success: false
                 })
             }
-
+            if (error === "unverified") {
+                return res.status(401).json({
+                    message: "unverified",
+                    success: false
+                })
+            }
         }
-        else {
-            res.status(404).json({
-                success: false,
-                // message: "Wrong password"
-                message: "Authentication unsuccessful"
-            })
-        }
+        // try {
+        //     if (loginUserDetails.verified === true)
+        //         pass
+        //     else {
+        //         throw new Error("Please verify yourself first from your email")
+        //     }
+        // }
+        // catch (error) {
+        //     return res.status(401).json({
+        //         message: "unverified"
+        //     })
+        // }
     }
 }
-
 
 //user logout 
 
