@@ -14,7 +14,12 @@ export const verifyEmail = async (req, res) => {
         // let decoded = jwt.verify(token, `${process.env.MY_SECRET_KEY}`)
         jwt.verify(token, `${process.env.MY_SECRET_KEY}`, async (err,decoded) => {
             if (err) {
-                console.log(err)
+                if(err.name==="TokenExpiredError"){
+                    const error = err.name
+                    res.status(403).json({
+                        data:{error}
+                    })
+                }
             }
             else {
                 console.log("token is correct",decoded)
@@ -22,7 +27,7 @@ export const verifyEmail = async (req, res) => {
                 const userData = await User_details.findOne({ _id: `${userID}` });
                 userData.verified = true;
                 res.status(200).json({
-                    message:"success"
+                    data:"success"
                 })
                 return await userData.save();
 

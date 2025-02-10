@@ -2,7 +2,7 @@ import User_details from "../models/userSchema.js";
 import session from "../models/sessionSchema.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { sendEmail } from "../emailVerify/verifyEmail.js";
+import { sendEmail } from "../emailVerify/sendMail.js";
 
 let loginUserDetails = null;
 
@@ -36,7 +36,7 @@ export const createUser = async (req, res) => {
 
 
         const userID = userData._id
-        const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
+        const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '1s' });
         await userData.save();
 
 

@@ -74,10 +74,10 @@ export default function Signup() {
         method: "POST",
         data: data
       });
-      console.log("Registration Successful:", response.data);
+    //   console.log("Registration Successful:", response.data);
       setUserExistError("");
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         
       if (
         error.response &&

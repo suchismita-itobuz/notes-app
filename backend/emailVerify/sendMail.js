@@ -9,7 +9,7 @@ dotenv.config({ path: ".env" });
 
 export const sendEmail = async (email, token, fname) => {
     try {
-        // console.log("verify", email);
+        console.log("verify", email);
 
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -33,7 +33,7 @@ export const sendEmail = async (email, token, fname) => {
 
         transporter.use("compile", hbs(handlebarOptions));
 
-        const verificationLink = `http://localhost:4000/notes/verify/${token}`
+        const verificationLink = `http://localhost:5173/verify/${token}`
 
 
         transporter.sendMail({
