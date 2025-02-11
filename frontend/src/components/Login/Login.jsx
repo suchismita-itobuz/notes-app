@@ -13,7 +13,18 @@ export default function Login() {
           Incorrect credentials
         </div>
       );
-    } else {
+    }
+    else if( error==="unverified") {
+      return (
+        <div className="text-md text-red-900 mt-[5px] min-h-[30px] flex justify-center">Please check your mail for verification email</div>
+      );
+    }
+    else if(error === "logged in"){
+      return (
+        <div className="text-md text-red-900 mt-[5px] min-h-[30px] flex justify-center">You are already logged in!</div>
+      );
+    }
+    else {
       return (
         <div className="text-md text-red-900 mt-[5px] min-h-[30px] flex justify-center"></div>
       );
@@ -64,6 +75,8 @@ export default function Login() {
       });
       console.log("Login Successful:", response.data);
       setValidUserError("valid");
+      localStorage.setItem("accessToken",response.data.data.token)
+      localStorage.setItem("refreshToken",response.data.data.refresh_token)
     } catch (error) {
       console.log("Error", error.response.data.message);
       if (
@@ -72,6 +85,18 @@ export default function Login() {
       ) {
         setValidUserError("invalid");
       }
+      else if (
+        error &&
+        error.response.data.message === "unverified"
+      ) {
+        setValidUserError("unverified");
+      }
+      else if(
+         error &&
+        error.response.data.message ===  "You are already logged in")
+        {
+          setValidUserError("logged in");
+        }
     }
   };
 
@@ -110,10 +135,10 @@ export default function Login() {
           </button>
         </div>
         <Valid_user error={ValidUserError} />
-        <div className="flex justify-center">
-          <h6>
+        <div className="flex justify-center items-center">
+          <h6 className="text-sm first_bp:text-md lg:text-lg">
             Are you a new user ?
-            <Link to="/" className="text-blue-600 cursor-pointer">
+            <Link to="/" className="text-blue-600 cursor-pointer flex justify-center items-center">
               {" "}
               Sign Up
             </Link>

@@ -16,7 +16,8 @@ export const tokenExp = async (req, res) => {
         const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
         sendEmail(email, token, fname)
         res.status(200).json({
-            message:"true"
+            message:"true",
+            data: { verification_token: token }
         })
     }
     else{

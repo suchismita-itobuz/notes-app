@@ -135,9 +135,9 @@ export default function Signup() {
         </div>
         <Does_User_Exist error={userExistError} />
         <div className="flex justify-center">
-          <h7>
-            Are you an existing user ?<Link to="/login" className="text-blue-600 cursor-pointer"> Log in</Link>
-          </h7>
+          <h5 className="flex justify-center flex-col text-sm first_bp:text-md lg:text-lg">
+            Are you an existing user ?<Link to="/login" className="text-blue-600 cursor-pointer flex justify-center"> Log in</Link>
+          </h5>
         </div>
       </form>
     </div>

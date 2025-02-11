@@ -82,94 +82,73 @@ export const loginUser = async (req, res) => {
     }
 
     if (loginUserDetails) {
-        //     if (bcrypt.compareSync(password, loginUserDetails.password) && loginUserDetails.verified === true) {
-        //         const userID = loginUserDetails._id;
-
-        //         //generation of access token AND refresh token
-        //         const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
-        //         const refresh_token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '30d' });
-
-        //         await loginUserDetails.save()
-
-        //         const is_session_active = await session.findOne({ userID: `${userID}` })
-
-        //         try {
-        //             if (is_session_active) {
-        //                 throw Error;
-        //             }
-        //             else {
-        //                 await session.create({ userID: `${userID}` });
-        //                 res.status(200).json({
-        //                     success: true,
-        //                     data: {
-        //                         "token": token,
-        //                         "refresh_token": refresh_token
-        //                     },
-        //                     message: "You are logged in successfully",
-        //                 })
-
-        //             }
-
-        //         }
-        //         catch (error) {
-        //             res.status(404).json({
-        //                 success: false,
-        //                 message: "You are already logged in"
-        //             })
-        //         }
-
-        //     }
-        //     else {
-        //         res.status(404).json({
-        //             success: false,
-        //             // message: "Wrong password"
-        //             message: "Authentication unsuccessful"
-        //         })
-        //     }
-        // }
-
+       
         try {
-            if (!bcrypt.compareSync(password, loginUserDetails.password)) {
-                throw new Error("password wrong")
+            if (bcrypt.compareSync(password, loginUserDetails.password)){
+
             }
-            else if (loginUserDetails.verified === false) {
-                throw new Error("unverified")
-            }
+                
             else {
-                //login successful
+                throw new Error("pwd wrong")
             }
         }
         catch (error) {
-            console.log(error)
-            if (error === "Error: password wrong") {
-                console.log(error)
-                return res.status(401).json({
-                    message: "pwd wrong",
-                    success: false
-                })
+            return res.status(401).json({
+                message: "Authentication unsuccessful"
+            })
+        }
+
+        try {
+            if (loginUserDetails.verified === true)
+            {
+                const userID = loginUserDetails._id;
+
+                        //generation of access token AND refresh token
+                        const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
+                        const refresh_token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '30d' });
+        
+                        await loginUserDetails.save()
+        
+                        const is_session_active = await session.findOne({ userID: `${userID}` })
+        
+                        try {
+                            if (is_session_active) {
+                                throw Error;
+                            }
+                            else {
+                                await session.create({ userID: `${userID}` });
+                                res.status(200).json({
+                                    success: true,
+                                    data: {
+                                        "token": token,
+                                        "refresh_token": refresh_token
+                                    },
+                                    message: "You are logged in successfully",
+                                })
+        
+                            }
+        
+                        }
+                        catch (error) {
+                            res.status(404).json({
+                                success: false,
+                                message: "You are already logged in"
+                            })
+                        }
+        
             }
-            if (error === "unverified") {
-                return res.status(401).json({
-                    message: "unverified",
-                    success: false
-                })
+            else {
+                throw new Error("unverified")
             }
         }
-        // try {
-        //     if (loginUserDetails.verified === true)
-        //         pass
-        //     else {
-        //         throw new Error("Please verify yourself first from your email")
-        //     }
-        // }
-        // catch (error) {
-        //     return res.status(401).json({
-        //         message: "unverified"
-        //     })
-        // }
+        catch (error) {
+            return res.status(401).json({
+                message: "unverified"
+            })
+        }
     }
 }
-
+   
 //user logout 
 
 export const logout = async (req, res) => {

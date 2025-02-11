@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export default function Verify() {
     const { register, handleSubmit } = useForm();
@@ -67,8 +67,9 @@ export default function Verify() {
                 </form>
                 </div>
             ) : (
-              <div className="flex justify-center pt-[50px]">
-                <p className="text-center text-amber-600 font-bold">Verifying your account...</p>
+              <div className="flex justify-center pt-[50px] flex-col">
+                <p className="text-center text-amber-600 font-bold mb-[50px]">Verifying your account...</p>
+               <Link to="/login"><p className="text-center text-amber-800 font-bold underline text-2xl">Click here to login</p></Link>
                 </div>
             )
        

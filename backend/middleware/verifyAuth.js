@@ -4,10 +4,10 @@ import session from "../models/sessionSchema.js";
 export const verifyAuthorisation = async (req, res, next) => {
     //from headers take in the auth token and decode 
     const authHeader = req.headers.authorization;
-    // console.log(authHeader)
+  
     if (authHeader && authHeader.startsWith("Bearer")) {
         const token = authHeader.split(" ")[1]
-        // console.log("token", token)
+      
         try {
             let decoded = jwt.verify(token, `${process.env.MY_SECRET_KEY}`)
             console.log("userID", decoded)
