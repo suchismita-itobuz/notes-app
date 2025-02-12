@@ -52,13 +52,13 @@ export default function Signup() {
   function Does_User_Exist({ error }) {
     if (error) {
       return (
-        <div className="text-md text-red-900 mt-[5px] min-h-[30px] flex justify-center">
+        <div className="text-md text-red-900 min-h-[20px] flex justify-center">
           User already exists. Please login instead.
         </div>
       );
     } else {
       return (
-        <div className="text-md text-red-900 mt-[5px] min-h-[30px] flex justify-center"></div>
+        <div className="text-md text-red-900 min-h-[20px] flex justify-center"></div>
       );
     }
   }
@@ -93,13 +93,13 @@ export default function Signup() {
     <div className="flex justify-center align-pt-[10px] center">
       <form
         onSubmit={handleSubmit(submitForm)}
-        className="w-[300px] first_bp:w-[350px] second_bp:w-[400px] md:[w-743px] bg-[#FFD689] rounded shadow-xl p-[20px] m-[50px] md:mt-[70px] lg:mt-[120px]"
+        className="w-[300px] first_bp:w-[350px] second_bp:w-[400px] md:[w-743px] bg-[#FFD689] rounded shadow-xl p-[20px] m-[50px] md:mt-[20px] lg:mt-[20px]"
       >
         <h3 className="text-lg text-center mb-[20px] font-bold text-amber-700 md:text-2xl">
           Sign Up
         </h3>
         <div className="flex flex-col mb-[20px]">
-          <label className="mb-[10px] text-md md:text-xl">First Name:</label>
+          <label className="mb-[10px] text-md md:text-lg">First Name:</label>
           <input
             type="text"
             name="fname"
@@ -109,7 +109,7 @@ export default function Signup() {
           <ErrorsName />
         </div>
         <div className="flex flex-col mb-[20px]">
-          <label className="mb-[10px] text-md md:text-xl">Email:</label>
+          <label className="mb-[10px] text-md md:text-lg">Email:</label>
           <input
             type="email"
             name="email"
@@ -118,8 +118,8 @@ export default function Signup() {
           />
           <ErrorsEmail />
         </div>
-        <div className="flex flex-col mb-[20px]">
-          <label className="mb-[10px] text-md md:text-xl">Password:</label>
+        <div className="flex flex-col mb-[5px]">
+          <label className="mb-[10px] text-md md:text-lg">Password:</label>
           <input
             type="password"
             name="password"

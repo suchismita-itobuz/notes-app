@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { user_validation_schema_login } from "../../validation/dataValidation";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+
 
 export default function Login() {
   function Valid_user({ error }) {
@@ -24,6 +25,9 @@ export default function Login() {
         <div className="text-md text-red-900 mt-[5px] min-h-[30px] flex justify-center">You are already logged in!</div>
       );
     }
+    else if(error === "valid"){
+          return <Navigate to="/Notes"/>
+    }
     else {
       return (
         <div className="text-md text-red-900 mt-[5px] min-h-[30px] flex justify-center"></div>
@@ -31,7 +35,7 @@ export default function Login() {
     }
   }
 
-  const [ValidUserError, setValidUserError] = useState("valid");
+  const [ValidUserError, setValidUserError] = useState("");
 
   function ErrorsEmail() {
     if (errors.email && errors.email != null) {
@@ -74,9 +78,12 @@ export default function Login() {
         data: data,
       });
       console.log("Login Successful:", response.data);
-      setValidUserError("valid");
+      
       localStorage.setItem("accessToken",response.data.data.token)
       localStorage.setItem("refreshToken",response.data.data.refresh_token)
+      setValidUserError("valid");
+
+     
     } catch (error) {
       console.log("Error", error.response.data.message);
       if (
@@ -104,7 +111,7 @@ export default function Login() {
     <div className="flex justify-center align-center">
       <form
         onSubmit={handleSubmit(submitForm)}
-        className=" w-[300px] first_bp:w-[350px] second_bp:w-[400px] md:[w-743px] bg-[#FFD689] rounded shadow-xl p-[20px] m-[50px] md:mt-[70px] lg:mt-[120px]"
+        className=" w-[300px] first_bp:w-[350px] second_bp:w-[400px] md:[w-743px] bg-[#FFD689] rounded shadow-xl p-[20px] m-[50px] md:mt-[20px] lg:mt-[20px]"
       >
         <h3 className="text-lg text-center mb-[20px] font-bold text-amber-700 md:text-2xl">
           Login

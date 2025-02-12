@@ -5,11 +5,14 @@ import { note_validation_schema } from "../validators/noteValidation.js";
 import { validate } from "../middleware/validateData.js";
 import { resendAccessToken } from "../helper/resendAccessToken.js"
 import { upload, uploadNotes } from "../multerConfig.js";
+import { getUser } from "../helper/getUser.js";
+
 
 
 
 const noteRoute = express.Router();
 
+noteRoute.get("/getUser",verifyAuthorisation,getUser)
 noteRoute.post("/addNote",verifyAuthorisation,validate(note_validation_schema),createNote);
 noteRoute.get("/ShowAllNotes",verifyAuthorisation,showSortedNote);
 noteRoute.get("/ShowNoteByID/:id",verifyAuthorisation,showNoteById)

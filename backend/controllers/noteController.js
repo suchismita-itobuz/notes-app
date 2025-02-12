@@ -29,9 +29,10 @@ export const showSortedNote = async (req, res) => {
     try {
         const {sortBy} = req.query
         const {pageNum} = req.query //starts from 0 cuz otherwise if it starts from 1 the first ${displayedEntries} will be skipped
-        const displayedEntries = 2
+        
+        const displayedEntries = 3
         // console.log(sortBy)
-        let sortCriteria = {}
+        let sortCriteria = 3
         if (sortBy === "asc"){
             sortCriteria = {createdAt: "asc"}
         }
