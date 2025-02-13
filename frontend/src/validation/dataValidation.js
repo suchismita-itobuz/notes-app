@@ -13,6 +13,11 @@ export const user_validation_schema_login = yup.object({
     password: yup.string().trim().required("Password is required").minLowercase(1, "Minimum 1 lowercase is required").minUppercase(1, "Minimum 1 uppercase character is required").minNumbers(1, "Minimum 1 number is required").minSymbols(1, "Minimum 1 symbol is required").min(3, "minimum 3 characters required")
 })
 
+export const note_validation_schema = yup.object({
+    title:yup.string().trim().min(1,"Title cannot be empty"),
+    content:yup.string().trim().min(1,"Content cannot be empty")
+})
+
 
 
 
