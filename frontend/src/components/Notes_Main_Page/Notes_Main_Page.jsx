@@ -49,11 +49,11 @@ export default function NotesMainPage() {
     const search_results = await axios.post("http://localhost:4000/notes/search",
       {search_query},{headers: {Authorization:`Bearer ${token}`}}
     )
-    // console.log(search_results)
+    
   }
 
   }
-
+//wip
   return (
     <>
       <div className="min-h-screen bg-beige">
