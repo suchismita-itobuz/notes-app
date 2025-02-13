@@ -122,9 +122,10 @@ export const updateNote = async (req, res) => {
 
 export const searchNote = async(req,res) => {
     const {search_query} = req.body
-    console.log(search_query)
     const note = await notes.find({userID:req.id,title:{ "$regex": search_query, "$options": "i" }})
-    if(note){
+    // console.log("notes",note)
+    try{
+    if(note.length>0){
         res.status(200).json({
             success:true,
             data:note
@@ -136,5 +137,12 @@ export const searchNote = async(req,res) => {
             message:"No notes exist in the record"
         })
     }
+}
+catch(error){
+    console.log(error)
+    res.status(404).json({
+        success:false
+    })
+}
 }
 

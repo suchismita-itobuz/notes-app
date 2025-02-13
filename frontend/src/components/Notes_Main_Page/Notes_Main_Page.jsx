@@ -40,6 +40,20 @@ export default function NotesMainPage() {
     if (token) fetchNotes();
   }, [token,sortBy]);
 
+  async function searchNotes(e) {
+    e.preventDefault()
+    const search_query = e.target.search.value
+    // console.log(search_query)
+    e.target.search.value = ""
+    if (token){
+    const search_results = await axios.post("http://localhost:4000/notes/search",
+      {search_query},{headers: {Authorization:`Bearer ${token}`}}
+    )
+    // console.log(search_results)
+  }
+
+  }
+
   return (
     <>
       <div className="min-h-screen bg-beige">
@@ -80,10 +94,12 @@ export default function NotesMainPage() {
         {/* Main Content */}
         <div className="container mx-auto p-6">
           {/* Search Bar */}
+          <form onSubmit={searchNotes}>
           <div className="flex flex-col space-y-3 md:flex-row justify-center md:space-x-2 md:space-y-0 mb-6">
-            <input type="text" placeholder="Search notes..." className="border p-2 rounded-md w-full md:w-2/3" />
+            <input type="textarea" placeholder="Search notes by title..." className="border p-2 rounded-md w-full md:w-2/3" name="search"/>
             <button className="bg-amber-500 hover:bg-amber-700 hover:text-white px-4 py-2 rounded-md">Submit</button>
           </div>
+          </form>
 
           {/* Add Note Button */}
           <div className="flex justify-center mb-6">
