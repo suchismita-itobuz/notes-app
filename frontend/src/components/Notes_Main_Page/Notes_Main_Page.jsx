@@ -1,15 +1,24 @@
 
 import { useState, useEffect } from "react";
-import { Menu, X, CirclePlus } from "lucide-react";
+import { Menu, X, CirclePlus, ChevronRight, ChevronLeft} from "lucide-react";
 import navbarLogo from "../../assets/book.png";
 import man from "../../assets/man.jpg";
 import axios from "axios";
+
 
 export default function NotesMainPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [fname, setFname] = useState("");
   const [result, setResult] = useState([]);
-  const [sortBy,setSortBy] = useState("desc")
+  const [sortBy, setSortBy] = useState("desc")
+  const [did_user_search, setDid_User_Search] = useState(false)
+  const [search_result,setSearch_results] = useState([])
+  const [pageNum,setPageNum] =useState(1)
+  const [UpdatedPageNum,setUpdatedPageNum] = useState(0)
+  const [leftdisablebtn,setLeftDisableBtn] = useState(false)
+  const [rightdisablebtn,setRightDisableBtn] = useState(false)
+  const [max_limit,setMax_limit] = useState(null)
+
   const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
@@ -20,40 +29,74 @@ export default function NotesMainPage() {
         });
         setFname(response.data.data.user[0].fname);
       } catch (error) {
-        console.error(error);
+        // console.error(error);
       }
     };
     if (token) fetchUser();
   }, [token]);
 
+  useEffect(()=>{
+    setUpdatedPageNum(pageNum-1)
+  },[pageNum])
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/notes/ShowAllNotes?sortBy=${sortBy}`, {
+        
+        const response = await axios.get(`http://localhost:4000/notes/ShowAllNotes?sortBy=${sortBy}&pageNum=${UpdatedPageNum}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setResult(response.data.data);
+        setResult(response.data.data.note);
+        setMax_limit(response.data.data.max_limit);
+        setDid_User_Search(false)
+        console.log(response.data.data.note)
+        console.log("with api call",UpdatedPageNum)
       } catch (error) {
-        console.error(error);
+        // console.error(error);
       }
     };
     if (token) fetchNotes();
-  }, [token,sortBy]);
+  }, [token, sortBy,UpdatedPageNum]);
 
   async function searchNotes(e) {
+    setDid_User_Search(true)
     e.preventDefault()
     const search_query = e.target.search.value
     // console.log(search_query)
     e.target.search.value = ""
-    if (token){
-    const search_results = await axios.post("http://localhost:4000/notes/search",
-      {search_query},{headers: {Authorization:`Bearer ${token}`}}
-    )
-    
-  }
+    if (token) {
+      const response = await axios.post("http://localhost:4000/notes/search",
+        { search_query }, { headers: { Authorization: `Bearer ${token}` } }
+      )
+      setSearch_results(response.data.data)
+      // console.log(response)
+      
+    }
 
   }
-//wip
+
+  useEffect(()=>{
+    if(pageNum<=1){
+      setLeftDisableBtn(true)
+      setRightDisableBtn(false)
+    }
+    if(pageNum>1){
+      setLeftDisableBtn(false)
+    }
+    if(pageNum===max_limit){
+      setRightDisableBtn(true)
+    }
+  },[pageNum,max_limit])
+
+  function Previous_page(){
+    setPageNum(pageNum-1)
+  }
+  function Next_page(){
+    setPageNum(pageNum+1)
+  }
+  
+
+  
   return (
     <>
       <div className="min-h-screen bg-beige">
@@ -95,10 +138,10 @@ export default function NotesMainPage() {
         <div className="container mx-auto p-6">
           {/* Search Bar */}
           <form onSubmit={searchNotes}>
-          <div className="flex flex-col space-y-3 md:flex-row justify-center md:space-x-2 md:space-y-0 mb-6">
-            <input type="textarea" placeholder="Search notes by title..." className="border p-2 rounded-md w-full md:w-2/3" name="search"/>
-            <button className="bg-amber-500 hover:bg-amber-700 hover:text-white px-4 py-2 rounded-md">Submit</button>
-          </div>
+            <div className="flex flex-col space-y-3 md:flex-row justify-center md:space-x-2 md:space-y-0 mb-6">
+              <input type="textarea" placeholder="Search notes by title..." className="border p-2 rounded-md w-full md:w-2/3" name="search" />
+              <button className="bg-amber-500 hover:bg-amber-700 hover:text-white px-4 py-2 rounded-md">Submit</button>
+            </div>
           </form>
 
           {/* Add Note Button */}
@@ -108,32 +151,66 @@ export default function NotesMainPage() {
             </button>
           </div>
 
-           {/* Dropdown Menu For Sorting Notes */}
+          {/* Dropdown Menu For Sorting Notes */}
 
           <div className="flex justify-center">
-          <select className="bg-amber-500 hover:bg-amber-700 hover:text-white rounded-full p-[10px] text-sm" onChange={(e)=>{setSortBy(e.target.value)}}>
-            <option value="desc">Sort By:Newest first</option>
-            <option value="asc">Sort By:Oldest first</option>
-            <option value="title">Sort By:Title</option>
-          </select>
+            <select className="bg-amber-500 hover:bg-amber-700 hover:text-white rounded-full p-[10px] text-sm" onChange={(e) => { setSortBy(e.target.value) }}>
+              <option value="desc">Sort By:Newest first</option>
+              <option value="asc">Sort By:Oldest first</option>
+              <option value="title">Sort By:Title</option>
+            </select>
           </div>
 
           {/* Notes Section */}
           <div className="p-[50px] flex flex-wrap justify-center gap-10">
-            {result.length > 0 ? (
-              result.map((data, i) => (
-                
-                <div key={i} className="flex flex-col gap-3 bg-amber-300 hover:bg-amber-400 cursor-pointer p-4 mb-4 h-[200px] w-[200px] rounded-md shadow-md">
-                  <h2 className="text-lg font-semibold">Title: {data.title}</h2>
-                  <p className="text-sm">Content: {data.content}</p>
+            {!did_user_search ? (
+              result.length > 0 ? (
+                result.map((data, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col gap-3 bg-amber-300 hover:bg-amber-400 cursor-pointer p-4 mb-4 h-[200px] w-[200px] rounded-md shadow-md"
+                  >
+                    <h2 className="text-lg font-semibold">Title: {data.title}</h2>
+                    <p className="text-sm">Content: {data.content}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm min-w-[100px] md:text-lg font-semibold text-gray-700">
+                  No notes exist
                 </div>
-              ))
+              )
             ) : (
-              <div className="text-sm min-w-[100px] md:text-lg font-semibold text-gray-700">No notes exist</div>
+              <div className="text-lg font-semibold text-gray-700 p-[50px] flex flex-wrap justify-center gap-10">
+                {
+               search_result.length > 0 ? (
+                search_result.map((data, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col gap-3 bg-amber-300 hover:bg-amber-400 cursor-pointer p-4 mb-4 h-[200px] w-[200px] rounded-md shadow-md"
+                  >
+                    <h2 className="text-lg font-semibold">Title: {data.title}</h2>
+                    <p className="text-sm">Content: {data.content}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm min-w-[100px] md:text-lg font-semibold text-gray-700">
+                No notes exist based on this search
+              </div>
+              )
+            }
+              </div>
             )}
           </div>
+          {/* <div className="flex justify-center items-center text-green-600"><button onClick={()=>{setPageNum(pageNum-1)}}><ChevronLeft/></button>{pageNum}<button onClick={()=>{setPageNum(pageNum+1)}}><ChevronRight/></button></div> */}
+          <div className="flex justify-center items-center text-green-600"><button onClick={Previous_page} disabled={leftdisablebtn}><ChevronLeft/></button>{pageNum}<button onClick={Next_page} disabled={rightdisablebtn}><ChevronRight/></button></div>
         </div>
+     
       </div>
+     
     </>
   );
 }
+
+
+
+
