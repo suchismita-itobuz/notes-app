@@ -5,7 +5,7 @@ export const createNote = async (req, res) => {
     try {
         const { title, content } = req.body;
         const note = await notes.create({ title, content, userID: `${req.id}` })
-        // console.log(note)  
+        console.log("note",note)  
 
         res.status(200).json({
             success: true,
@@ -38,7 +38,7 @@ export const showSortedNote = async (req, res) => {
 
         function page_limit(len) {
             const i = Math.ceil((len/displayedEntries))
-            console.log(i)
+            // console.log(i)
             return i
         }
 
@@ -56,7 +56,7 @@ export const showSortedNote = async (req, res) => {
         }
 
         const note = await notes.find({ userID: `${req.id}` }).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries);
-        console.log(all_notes.length)
+        // console.log(all_notes.length)
         res.status(200).json({
             data: {
                 "note": note,
@@ -77,9 +77,13 @@ export const showSortedNote = async (req, res) => {
 export const showNoteById = async (req, res) => {
     try {
         const note_id = req.params.id;
+        // console.log("id",note_id)
         const note = await notes.find({ userID: `${req.id}`, _id: note_id });
+        // console.log("note",note)
         res.status(200).json({
-            data: note
+            data: note,
+            success:true,
+            message:"Note is displayed"
         })
     }
     catch (error) {
@@ -99,13 +103,15 @@ export const deleteNote = async (req, res) => {
         const note_id = req.params.id;
         await notes.deleteOne({ userID: `${req.id}`, _id: note_id });
         res.status(200).json({
-            message: "Notes deleted successfully"
+            message: "Notes deleted successfully",
+            success:true
         })
     }
     catch (error) {
         console.log(error)
         res.status(404).json({
             message: "Cannot delete data",
+            success:false
         })
     }
 }

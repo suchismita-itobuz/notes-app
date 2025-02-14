@@ -1,10 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { Menu, X, CirclePlus, ChevronRight, ChevronLeft, Trash2, Pencil, Eye} from "lucide-react";
+import { Menu, X, CirclePlus, ChevronRight, ChevronLeft, Trash2, Pencil} from "lucide-react";
 import navbarLogo from "../../assets/book.png";
 import man from "../../assets/man.jpg";
 import axios from "axios";
 import AddNoteModal from "../../components/AddNoteModal/AddNoteModal.jsx";
+import ViewNoteModal from "../../components/ViewNoteModal/ViewNoteModal.jsx"
+import DeleteNoteModal from "../DeleteNoteModal/DeleteNoteModal.jsx";
 
 
 export default function NotesMainPage() {
@@ -19,12 +21,9 @@ export default function NotesMainPage() {
   const [leftdisablebtn,setLeftDisableBtn] = useState(false)
   const [rightdisablebtn,setRightDisableBtn] = useState(false)
   const [max_limit,setMax_limit] = useState(null)
-  const [openModal, setOpenModal] = useState(true);
+  const [refresh, setRefresh ] = useState(false)
 
   const token = localStorage.getItem("accessToken");
-
-
-  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -34,7 +33,7 @@ export default function NotesMainPage() {
         });
         setFname(response.data.data.user[0].fname);
       } catch (error) {
-        // console.error(error);
+        console.error(error);
       }
     };
     if (token) fetchUser();
@@ -54,14 +53,13 @@ export default function NotesMainPage() {
         setResult(response.data.data.note);
         setMax_limit(response.data.data.max_limit);
         setDid_User_Search(false)
-        console.log(response.data.data.note)
-        console.log("with api call",UpdatedPageNum)
+        setRefresh(false)
       } catch (error) {
-        // console.error(error);
+        console.error(error);
       }
     };
     if (token) fetchNotes();
-  }, [token, sortBy,UpdatedPageNum]);
+  }, [token, sortBy,UpdatedPageNum,refresh]);
 
   async function searchNotes(e) {
     setDid_User_Search(true)
@@ -151,11 +149,7 @@ export default function NotesMainPage() {
 
           {/* Add Note Button */}
           <div className="flex justify-center mb-6">
-            <button className="bg-yellow-500 px-4 py-2 rounded-md hover:bg-yellow-600 hover:text-white flex group"  onClick={() => setOpenModal(true)}>
-              Add Note <CirclePlus size={24} className="ml-[10px] text-green-700 group-hover:text-green-400" />
-            </button>
-
-      <AddNoteModal openModal={openModal} setOpenModal={setOpenModal}/>
+      <AddNoteModal refresh={refresh} setRefresh={setRefresh} />
           </div>
 
           {/* Dropdown Menu For Sorting Notes */}
@@ -179,7 +173,11 @@ export default function NotesMainPage() {
                   >
                     <h2 className="text-lg font-semibold">Title: {data.title}</h2>
                     <p className="text-sm">Content: {data.content}</p>
-                    <div className="flex gap-3 absolute bottom-[20px] right-[20px]"><Trash2 /><Pencil /><Eye /></div>
+                    {/* <p className="text-sm">id: {data._id}</p> */}
+                    <div className="flex gap-3 absolute bottom-[20px] right-[20px]">
+                    <div><ViewNoteModal id={data._id}/></div>
+                    {/* <div><DeleteNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh}/></div> */}
+                    </div>
                   </div>
                 ))
               ) : (
