@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { Menu, X, CirclePlus, ChevronRight, ChevronLeft, Trash2, Pencil} from "lucide-react";
+import { Menu, X, ChevronRight, ChevronLeft} from "lucide-react";
 import navbarLogo from "../../assets/book.png";
 import man from "../../assets/man.jpg";
 import axios from "axios";
 import AddNoteModal from "../../components/AddNoteModal/AddNoteModal.jsx";
 import ViewNoteModal from "../../components/ViewNoteModal/ViewNoteModal.jsx"
 import DeleteNoteModal from "../DeleteNoteModal/DeleteNoteModal.jsx";
+import UpdateNoteModal from "../UpdateNoteModal/UpdateNoteModal.jsx";
 
 
 export default function NotesMainPage() {
@@ -177,6 +178,9 @@ export default function NotesMainPage() {
                     <div className="flex gap-3 absolute bottom-[20px] right-[20px]">
                     <div><ViewNoteModal id={data._id}/></div>
                     <div><DeleteNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh}/></div>
+                    <div><UpdateNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh}/></div>
+                    
+
                     </div>
                   </div>
                 ))

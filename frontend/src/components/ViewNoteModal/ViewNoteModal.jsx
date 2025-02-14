@@ -23,10 +23,6 @@ export default function ViewNoteModal({id}) {
             setResultTitle(response.data.data[0].title)
             setResultContent(response.data.data[0].content)
 
-            // console.log("title",response.data.data.title)
-            // console.log("content",response.data.data.content)
-
-
         }
         catch(error){
             console.log(error)
