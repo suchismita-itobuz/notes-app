@@ -39,9 +39,22 @@ export default function AddNoteModal({refresh,setRefresh}) {
           return <div className="text-sm text-red-900 mt-[5px] min-h-[20px]"></div>;
         }
       }
+
+      function ErrorSameTitle() {
+        if (error) {
+          return (
+            <div className="flex justify-center text-sm text-red-900 mt-[5px] min-h-[20px]">
+              {"Cannot Add Note With Same Title"}
+            </div>
+          );
+        } else {
+          return <div className="text-sm text-red-900 mt-[5px] min-h-[20px]"></div>;
+        }
+      }
+
     const token = localStorage.getItem("accessToken");
     const [openModal, setOpenModal] = useState(false);
-    
+    const [error,setError] = useState(false)
     const {
         register,
         handleSubmit,
@@ -52,21 +65,27 @@ export default function AddNoteModal({refresh,setRefresh}) {
 
 
     const submitForm = async (data) => {
-        console.log("data", data);
+        
         try {
+            
             const response = await axios({
                 url: `http://localhost:4000/notes/addNote`,
                 headers: { Authorization: `Bearer ${token}` },
                 method: "POST",
                 data: data,
             });
-            
+            console.log("data", data);
             setOpenModal(false)
             setRefresh(true)
+            setError(false)
             reset()
 
         } catch (error) {
-            console.log(error)
+            console.log("error",error.response.data.message)
+            if(error.response.data.message==="note with same title exists"){
+            setError(true)
+            console.log("true")
+            }
         };
     }
     return (
@@ -107,7 +126,9 @@ export default function AddNoteModal({refresh,setRefresh}) {
                                     Submit
                                 </button>
                             </div>
+                            <ErrorSameTitle/>
                         </form>
+                        
                     </div>
                 </Modal.Body>
 

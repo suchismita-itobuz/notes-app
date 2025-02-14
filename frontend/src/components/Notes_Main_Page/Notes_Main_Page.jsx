@@ -190,7 +190,7 @@ export default function NotesMainPage() {
                 </div>
               )
             ) : (
-              <div className="text-lg font-semibold text-gray-700 p-[50px] flex flex-wrap justify-center gap-10">
+              <div className="text-lg font-semibold text-gray-700 p-[20px] flex flex-wrap justify-center gap-10">
                 {
                search_result.length > 0 ? (
                 search_result.map((data, i) => (

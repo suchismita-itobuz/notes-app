@@ -4,8 +4,16 @@ import notes from "../models/noteSchema.js"
 export const createNote = async (req, res) => {
     try {
         const { title, content } = req.body;
+        const flag = await notes.findOne({ title })
+        if (flag) {
+            return res.status(404).json({
+                success: false,
+                message: "note with same title exists",
+
+            })
+        }
         const note = await notes.create({ title, content, userID: `${req.id}` })
-        console.log("note",note)  
+        console.log("note", note)
 
         res.status(200).json({
             success: true,
@@ -27,6 +35,7 @@ export const createNote = async (req, res) => {
 //Show all notes and pagination as well 
 export const showSortedNote = async (req, res) => {
     try {
+        const { search_query } = req.body
         const { sortBy } = req.query
         const { pageNum } = req.query //starts from 0 cuz otherwise if it starts from 1 the first ${displayedEntries} will be skipped
 
@@ -37,7 +46,7 @@ export const showSortedNote = async (req, res) => {
 
 
         function page_limit(len) {
-            const i = Math.ceil((len/displayedEntries))
+            const i = Math.ceil((len / displayedEntries))
             // console.log(i)
             return i
         }
@@ -65,13 +74,72 @@ export const showSortedNote = async (req, res) => {
         })
     }
     catch (error) {
-        
+
         console.log(error)
         res.status(404).json({
             message: "Cannot fetch data",
         })
     }
 }
+
+
+
+//search note by title 
+
+export const searchNote = async (req, res) => {
+    const { sortBy } = req.query
+    const { pageNum } = req.query //starts from 0 cuz otherwise if it starts from 1 the first ${displayedEntries} will be skipped
+
+    const displayedEntries = 3
+
+    const all_notes = await notes.find({ userID: `${req.id}` })
+    const len = all_notes.length
+
+
+    function page_limit(len) {
+            const i = Math.ceil((len / displayedEntries))
+            return i
+    }
+
+    const max_limit = page_limit(len)
+
+    let sortCriteria = 3
+        if (sortBy === "asc") {
+            sortCriteria = { createdAt: "asc" }
+        }
+        else if (sortBy === "desc") {
+            sortCriteria = { createdAt: "desc" }
+        }
+        else {
+            sortCriteria = { title: "asc" }
+        }
+    const { search_query } = req.body
+    const note = await notes.find({ userID: req.id, title: { "$regex": search_query, "$options": "i" } }).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries);
+
+    // console.log("notes",note)
+    try {
+        if (note.length > 0) {
+            res.status(200).json({
+                success: true,
+                data: note
+            })
+        }
+        else {
+            res.status(200).json({
+                data: note,
+                success: true,
+                message: "No notes exist in the record"
+            })
+        }
+    }
+    catch (error) {
+        console.log(error)
+        res.status(404).json({
+            success: false
+        })
+    }
+}
+
 
 //show note by id 
 export const showNoteById = async (req, res) => {
@@ -82,8 +150,8 @@ export const showNoteById = async (req, res) => {
         // console.log("note",note)
         res.status(200).json({
             data: note,
-            success:true,
-            message:"Note is displayed"
+            success: true,
+            message: "Note is displayed"
         })
     }
     catch (error) {
@@ -104,14 +172,14 @@ export const deleteNote = async (req, res) => {
         await notes.deleteOne({ userID: `${req.id}`, _id: note_id });
         res.status(200).json({
             message: "Notes deleted successfully",
-            success:true
+            success: true
         })
     }
     catch (error) {
         console.log(error)
         res.status(404).json({
             message: "Cannot delete data",
-            success:false
+            success: false
         })
     }
 }
@@ -140,34 +208,4 @@ export const updateNote = async (req, res) => {
     }
 }
 
-
-
-//search note by title 
-
-export const searchNote = async (req, res) => {
-    const { search_query } = req.body
-    const note = await notes.find({ userID: req.id, title: { "$regex": search_query, "$options": "i" } })
-    // console.log("notes",note)
-    try {
-        if (note.length > 0) {
-            res.status(200).json({
-                success: true,
-                data: note
-            })
-        }
-        else {
-            res.status(200).json({
-                data: note,
-                success: true,
-                message: "No notes exist in the record"
-            })
-        }
-    }
-    catch (error) {
-        console.log(error)
-        res.status(404).json({
-            success: false
-        })
-    }
-}
 
