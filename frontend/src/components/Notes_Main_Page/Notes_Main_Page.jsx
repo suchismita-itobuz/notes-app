@@ -176,7 +176,7 @@ export default function NotesMainPage() {
                     {/* <p className="text-sm">id: {data._id}</p> */}
                     <div className="flex gap-3 absolute bottom-[20px] right-[20px]">
                     <div><ViewNoteModal id={data._id}/></div>
-                    {/* <div><DeleteNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh}/></div> */}
+                    <div><DeleteNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh}/></div>
                     </div>
                   </div>
                 ))

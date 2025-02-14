@@ -1,6 +1,6 @@
 import {Button,Modal } from "flowbite-react";
 import {Trash2} from "lucide-react"
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import axios from "axios";
 
@@ -12,27 +12,25 @@ export default function DeleteNoteModal({id,setRefresh,refresh}) {
     const [openModal, setOpenModal] = useState(false);
     const [del, setDel] = useState(false)
 
-    useEffect(()=>{
-        const deletenote = async() => {
+
+    const deletenote = async() => {
         try{
-            console.log(del,"delete")
+            setOpenModal(false)
+            setRefresh(true)
             const response = await axios({
                 url:`http://localhost:4000/notes/deleteNote/${id}`,
                 headers: { Authorization: `Bearer ${token}` },
                 method: "DELETE"
             })
-            setDel(false)
-            setRefresh(true)
+            console.log(response)
         }
         catch(error){
             console.log(error)
         }
       }
-    if(token) deletenote()},[del])
-  
- 
+   
 
-
+       
   return (
     <>
       <button onClick={() => setOpenModal(true)}><Trash2/></button>
@@ -45,7 +43,7 @@ export default function DeleteNoteModal({id,setRefresh,refresh}) {
               Are you sure you want to delete this product?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={() => {setOpenModal(false); setDel(true)}}>
+              <Button color="failure" onClick={deletenote}>
                 {"Yes, I'm sure"}
               </Button>
               <Button color="gray" onClick={() => setOpenModal(false)}>
