@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronRight, ChevronLeft} from "lucide-react";
+import { Menu, X, ChevronRight, ChevronLeft } from "lucide-react";
 import navbarLogo from "../../assets/book.png";
 import man from "../../assets/man.jpg";
 import axios from "axios";
@@ -15,14 +15,13 @@ export default function NotesMainPage() {
   const [fname, setFname] = useState("");
   const [result, setResult] = useState([]);
   const [sortBy, setSortBy] = useState("desc")
-  const [did_user_search, setDid_User_Search] = useState(false)
-  const [search_result,setSearch_results] = useState([])
-  const [pageNum,setPageNum] =useState(1)
-  const [UpdatedPageNum,setUpdatedPageNum] = useState(0)
-  const [leftdisablebtn,setLeftDisableBtn] = useState(false)
-  const [rightdisablebtn,setRightDisableBtn] = useState(false)
-  const [max_limit,setMax_limit] = useState(null)
-  const [refresh, setRefresh ] = useState(false)
+  const [pageNum, setPageNum] = useState(1)
+  const [UpdatedPageNum, setUpdatedPageNum] = useState(0)
+  const [leftdisablebtn, setLeftDisableBtn] = useState(false)
+  const [rightdisablebtn, setRightDisableBtn] = useState(false)
+  const [max_limit, setMax_limit] = useState(null)
+  const [refresh, setRefresh] = useState(false)
+  const [search_query,setSearch_Query] = useState("")
 
   const token = localStorage.getItem("accessToken");
 
@@ -40,67 +39,63 @@ export default function NotesMainPage() {
     if (token) fetchUser();
   }, [token]);
 
-  useEffect(()=>{
-    setUpdatedPageNum(pageNum-1)
-  },[pageNum])
+  useEffect(() => {
+    setUpdatedPageNum(pageNum - 1)
+  }, [pageNum])
+
+
+  const fetchNotes = async (search_query) => {
+    try {
+      const response = await axios.post(`http://localhost:4000/notes/ShowAllNotes?sortBy=${sortBy}&pageNum=${UpdatedPageNum}`, { search_query: search_query }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setResult(response.data.data.note);
+      setMax_limit(response.data.data.max_limit);
+      console.log(response.data.data.max_limit)
+      setRefresh(false)
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        
-        const response = await axios.get(`http://localhost:4000/notes/ShowAllNotes?sortBy=${sortBy}&pageNum=${UpdatedPageNum}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setResult(response.data.data.note);
-        setMax_limit(response.data.data.max_limit);
-        setDid_User_Search(false)
-        setRefresh(false)
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    if (token) fetchNotes();
-  }, [token, sortBy,UpdatedPageNum,refresh]);
+    if (token) fetchNotes(search_query);
+  }, [token, sortBy, UpdatedPageNum, refresh,search_query]);
 
-  async function searchNotes(e) {
-    setDid_User_Search(true)
-    e.preventDefault()
-    const search_query = e.target.search.value
-    // console.log(search_query)
-    e.target.search.value = ""
-    if (token) {
-      const response = await axios.post("http://localhost:4000/notes/search",
-        { search_query }, { headers: { Authorization: `Bearer ${token}` } }
-      )
-      setSearch_results(response.data.data)
-      // console.log(response)
-      
-    }
 
-  }
-
-  useEffect(()=>{
-    if(pageNum<=1){
+  useEffect(() => {
+    if (pageNum <= 1) {
       setLeftDisableBtn(true)
       setRightDisableBtn(false)
     }
-    if(pageNum>1){
+    if (pageNum > 1) {
       setLeftDisableBtn(false)
     }
-    if(pageNum===max_limit){
+    if (pageNum === max_limit) {
       setRightDisableBtn(true)
     }
-  },[pageNum,max_limit])
+  }, [pageNum, max_limit])
 
-  function Previous_page(){
-    setPageNum(pageNum-1)
+  function Previous_page() {
+    setPageNum(pageNum - 1)
   }
-  function Next_page(){
-    setPageNum(pageNum+1)
+  function Next_page() {
+    setPageNum(pageNum + 1)
   }
-  
 
-  
+  async function handleSearch(e){
+    e.preventDefault();
+    const query = e.target.search.value.trim()
+    setSearch_Query(query)
+    fetchNotes(query); 
+  }
+
+  useEffect(()=>{
+    setSearch_Query("")
+  },[])
+
+
+
   return (
     <>
       <div className="min-h-screen bg-beige">
@@ -141,7 +136,7 @@ export default function NotesMainPage() {
         {/* Main Content */}
         <div className="container mx-auto p-6">
           {/* Search Bar */}
-          <form onSubmit={searchNotes}>
+          <form onSubmit={handleSearch}>
             <div className="flex flex-col space-y-3 md:flex-row justify-center md:space-x-2 md:space-y-0 mb-6">
               <input type="textarea" placeholder="Search notes by title..." className="border p-2 rounded-md w-full md:w-2/3" name="search" />
               <button className="bg-amber-500 hover:bg-amber-700 hover:text-white px-4 py-2 rounded-md">Submit</button>
@@ -150,7 +145,7 @@ export default function NotesMainPage() {
 
           {/* Add Note Button */}
           <div className="flex justify-center mb-6">
-      <AddNoteModal refresh={refresh} setRefresh={setRefresh} />
+            <AddNoteModal refresh={refresh} setRefresh={setRefresh} />
           </div>
 
           {/* Dropdown Menu For Sorting Notes */}
@@ -165,8 +160,8 @@ export default function NotesMainPage() {
 
           {/* Notes Section */}
           <div className="p-[50px] flex flex-wrap justify-center gap-10">
-            {!did_user_search ? (
-              result.length > 0 ? (
+           
+              {result.length > 0 ? (
                 result.map((data, i) => (
                   <div
                     key={i}
@@ -174,12 +169,11 @@ export default function NotesMainPage() {
                   >
                     <h2 className="text-lg font-semibold">Title: {data.title}</h2>
                     <p className="text-sm">Content: {data.content}</p>
-                    {/* <p className="text-sm">id: {data._id}</p> */}
                     <div className="flex gap-3 absolute bottom-[20px] right-[20px]">
-                    <div><ViewNoteModal id={data._id}/></div>
-                    <div><DeleteNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh}/></div>
-                    <div><UpdateNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh}/></div>
-                    
+                      <div><ViewNoteModal id={data._id} /></div>
+                      <div><DeleteNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh} /></div>
+                      <div><UpdateNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh} /></div>
+
 
                     </div>
                   </div>
@@ -188,34 +182,13 @@ export default function NotesMainPage() {
                 <div className="text-sm min-w-[100px] md:text-lg font-semibold text-gray-700">
                   No notes exist
                 </div>
-              )
-            ) : (
-              <div className="text-lg font-semibold text-gray-700 p-[20px] flex flex-wrap justify-center gap-10">
-                {
-               search_result.length > 0 ? (
-                search_result.map((data, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col gap-3 bg-amber-300 hover:bg-amber-400 cursor-pointer p-4 mb-4 h-[200px] w-[200px] rounded-md shadow-md"
-                  >
-                    <h2 className="text-lg font-semibold">Title: {data.title}</h2>
-                    <p className="text-sm">Content: {data.content}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="text-sm min-w-[100px] md:text-lg font-semibold text-gray-700">
-                No notes exist based on this search
-              </div>
-              )
-            }
-              </div>
-            )}
+              )}
           </div>
-          <div className="flex justify-center items-center text-green-600"><button onClick={Previous_page} disabled={leftdisablebtn}><ChevronLeft/></button>{pageNum}<button onClick={Next_page} disabled={rightdisablebtn}><ChevronRight/></button></div>
+          <div className="flex justify-center items-center text-green-600"><button onClick={Previous_page} disabled={leftdisablebtn}><ChevronLeft /></button>{pageNum}<button onClick={Next_page} disabled={rightdisablebtn}><ChevronRight /></button></div>
         </div>
-     
+
       </div>
-     
+
     </>
   );
 }

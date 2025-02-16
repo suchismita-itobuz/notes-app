@@ -38,6 +38,7 @@ export const createUser = async (req, res) => {
         const userID = userData._id
         const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
         await userData.save();
+       
 
 
         res.status(200).json({

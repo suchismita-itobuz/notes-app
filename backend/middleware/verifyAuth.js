@@ -10,15 +10,15 @@ export const verifyAuthorisation = async (req, res, next) => {
       
         try {
             let decoded = jwt.verify(token, `${process.env.MY_SECRET_KEY}`)
-            console.log("userID", decoded)
+            // console.log("userID", decoded)
             req.id = decoded.userID
             //req.id will go to the next function
-            console.log("fdvfedve", decoded.userID)
+            console.log("Verify Middleware is working for this user", decoded.userID)
             //here session is checked if active or not 
             const userID = decoded.userID
             try {
                 const flag = await session.findOne({ userID: `${userID}` })
-                console.log("flag", flag)
+                // console.log("flag", flag)
                 if (flag === null) {
                     throw Error
                 }

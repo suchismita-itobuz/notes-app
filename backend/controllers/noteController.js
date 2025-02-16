@@ -35,26 +35,26 @@ export const createNote = async (req, res) => {
 //Show all notes and pagination as well 
 export const showSortedNote = async (req, res) => {
     try {
-        const { search_query } = req.body
-        const { sortBy } = req.query
+        const { search_query } = req.body //accepts search query value from request body
+        const { sortBy } = req.query //sortBy value from query
         const { pageNum } = req.query //starts from 0 cuz otherwise if it starts from 1 the first ${displayedEntries} will be skipped
 
         const displayedEntries = 3
 
-        const all_notes = await notes.find({ userID: `${req.id}` })
-        const len = all_notes.length
+        const all_notes = await notes.find({ userID: `${req.id}` }) //find all notes of user
+        const len = all_notes.length //find length of all notes
 
 
         function page_limit(len) {
             const i = Math.ceil((len / displayedEntries))
-            // console.log(i)
             return i
-        }
+        } //function which calculates max page limit 
 
-        const max_limit = page_limit(len)
+        const max_limit = page_limit(len) //storing the value of max page limit
 
         let sortCriteria = 3
-        if (sortBy === "asc") {
+
+        if (sortBy === "asc") {                         //sortBy values is mapped and stored here.
             sortCriteria = { createdAt: "asc" }
         }
         else if (sortBy === "desc") {
@@ -64,14 +64,35 @@ export const showSortedNote = async (req, res) => {
             sortCriteria = { title: "asc" }
         }
 
-        const note = await notes.find({ userID: `${req.id}` }).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries);
-        // console.log(all_notes.length)
-        res.status(200).json({
-            data: {
-                "note": note,
-                "max_limit": max_limit
-            }
-        })
+
+        console.log("search_query",search_query)
+        
+        if (search_query === "") {
+            const note = await notes.find({ userID: `${req.id}` }).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries);
+            // console.log(all_notes.length)
+            res.status(200).json({
+                data: {
+                    "note": note,
+                    "max_limit": max_limit
+                }
+            })
+        }
+        else{
+            console.log("condiiton is wokeing fine")
+            const all_notes = await notes.find({userID:req.id,title:{ "$regex": search_query, "$options": "i" } })
+            const note = await notes.find({ userID: req.id, title: { "$regex": search_query, "$options": "i" } }).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries); //finding notes based on this search
+            const len = all_notes.length
+            // console.log(len)
+            const max_limit = page_limit(len)
+
+            res.status(200).json({
+                data: {
+                    "note": note,
+                    "max_limit": max_limit
+                }
+            })
+        }
+
     }
     catch (error) {
 
@@ -84,61 +105,61 @@ export const showSortedNote = async (req, res) => {
 
 
 
-//search note by title 
+// //search note by title 
 
-export const searchNote = async (req, res) => {
-    const { sortBy } = req.query
-    const { pageNum } = req.query //starts from 0 cuz otherwise if it starts from 1 the first ${displayedEntries} will be skipped
+// export const searchNote = async (req, res) => {
+//     const { sortBy } = req.query
+//     const { pageNum } = req.query //starts from 0 cuz otherwise if it starts from 1 the first ${displayedEntries} will be skipped
 
-    const displayedEntries = 3
+//     const displayedEntries = 3
 
-    const all_notes = await notes.find({ userID: `${req.id}` })
-    const len = all_notes.length
+//     const all_notes = await notes.find({ userID: `${req.id}` })
+//     const len = all_notes.length
 
 
-    function page_limit(len) {
-            const i = Math.ceil((len / displayedEntries))
-            return i
-    }
+//     function page_limit(len) {
+//         const i = Math.ceil((len / displayedEntries))
+//         return i
+//     }
 
-    const max_limit = page_limit(len)
+//     const max_limit = page_limit(len)
 
-    let sortCriteria = 3
-        if (sortBy === "asc") {
-            sortCriteria = { createdAt: "asc" }
-        }
-        else if (sortBy === "desc") {
-            sortCriteria = { createdAt: "desc" }
-        }
-        else {
-            sortCriteria = { title: "asc" }
-        }
-    const { search_query } = req.body
-    const note = await notes.find({ userID: req.id, title: { "$regex": search_query, "$options": "i" } }).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries);
+//     let sortCriteria = 3
+//     if (sortBy === "asc") {
+//         sortCriteria = { createdAt: "asc" }
+//     }
+//     else if (sortBy === "desc") {
+//         sortCriteria = { createdAt: "desc" }
+//     }
+//     else {
+//         sortCriteria = { title: "asc" }
+//     }
+//     const { search_query } = req.body
+//     const note = await notes.find({ userID: req.id, title: { "$regex": search_query, "$options": "i" } }).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries);
 
-    // console.log("notes",note)
-    try {
-        if (note.length > 0) {
-            res.status(200).json({
-                success: true,
-                data: note
-            })
-        }
-        else {
-            res.status(200).json({
-                data: note,
-                success: true,
-                message: "No notes exist in the record"
-            })
-        }
-    }
-    catch (error) {
-        console.log(error)
-        res.status(404).json({
-            success: false
-        })
-    }
-}
+//     // console.log("notes",note)
+//     try {
+//         if (note.length > 0) {
+//             res.status(200).json({
+//                 success: true,
+//                 data: note
+//             })
+//         }
+//         else {
+//             res.status(200).json({
+//                 data: note,
+//                 success: true,
+//                 message: "No notes exist in the record"
+//             })
+//         }
+//     }
+//     catch (error) {
+//         console.log(error)
+//         res.status(404).json({
+//             success: false
+//         })
+//     }
+// }
 
 
 //show note by id 
