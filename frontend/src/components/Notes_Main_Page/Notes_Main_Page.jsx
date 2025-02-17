@@ -8,6 +8,8 @@ import AddNoteModal from "../../components/AddNoteModal/AddNoteModal.jsx";
 import ViewNoteModal from "../../components/ViewNoteModal/ViewNoteModal.jsx"
 import DeleteNoteModal from "../DeleteNoteModal/DeleteNoteModal.jsx";
 import UpdateNoteModal from "../UpdateNoteModal/UpdateNoteModal.jsx";
+import Logout from "../Logout/Logout.jsx";
+import FileUpload from "../FileUpload/FileUpload.jsx";
 
 
 export default function NotesMainPage() {
@@ -22,6 +24,7 @@ export default function NotesMainPage() {
   const [max_limit, setMax_limit] = useState(null)
   const [refresh, setRefresh] = useState(false)
   const [search_query,setSearch_Query] = useState("")
+  const [userID,setUserID] = useState(null)
 
   const token = localStorage.getItem("accessToken");
 
@@ -32,6 +35,7 @@ export default function NotesMainPage() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFname(response.data.data.user[0].fname);
+        setUserID(response.data.data.user[0]._id)
       } catch (error) {
         console.error(error);
       }
@@ -110,8 +114,9 @@ export default function NotesMainPage() {
           <div className="hidden md:flex items-center space-x-6">
             <span className="font-serif text-lg italic text-[#FFD789] md:text-2xl lg:text-[20px] cursor-pointer">My Notes</span>
           </div>
-
+         
           <div className="hidden md:flex items-center space-x-2 cursor-pointer">
+          <Logout/>
             <img src={man} alt="Profile Pic" className="h-[50px] w-[50px] ml-[15px] p-[10px] lg:ml-[20px] rounded-full" />
             <span className="font-serif text-lg italic text-[#FFD789] md:text-2xl lg:text-[20px] pr-[10px]">Hi {fname}</span>
           </div>
@@ -173,6 +178,7 @@ export default function NotesMainPage() {
                       <div><ViewNoteModal id={data._id} /></div>
                       <div><DeleteNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh} /></div>
                       <div><UpdateNoteModal id={data._id} refresh={refresh} setRefresh={setRefresh} /></div>
+                      <div><FileUpload  id={data._id}/></div>
 
 
                     </div>

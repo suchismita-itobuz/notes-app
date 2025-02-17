@@ -104,64 +104,6 @@ export const showSortedNote = async (req, res) => {
 }
 
 
-
-// //search note by title 
-
-// export const searchNote = async (req, res) => {
-//     const { sortBy } = req.query
-//     const { pageNum } = req.query //starts from 0 cuz otherwise if it starts from 1 the first ${displayedEntries} will be skipped
-
-//     const displayedEntries = 3
-
-//     const all_notes = await notes.find({ userID: `${req.id}` })
-//     const len = all_notes.length
-
-
-//     function page_limit(len) {
-//         const i = Math.ceil((len / displayedEntries))
-//         return i
-//     }
-
-//     const max_limit = page_limit(len)
-
-//     let sortCriteria = 3
-//     if (sortBy === "asc") {
-//         sortCriteria = { createdAt: "asc" }
-//     }
-//     else if (sortBy === "desc") {
-//         sortCriteria = { createdAt: "desc" }
-//     }
-//     else {
-//         sortCriteria = { title: "asc" }
-//     }
-//     const { search_query } = req.body
-//     const note = await notes.find({ userID: req.id, title: { "$regex": search_query, "$options": "i" } }).sort(sortCriteria).limit(displayedEntries).skip(pageNum * displayedEntries);
-
-//     // console.log("notes",note)
-//     try {
-//         if (note.length > 0) {
-//             res.status(200).json({
-//                 success: true,
-//                 data: note
-//             })
-//         }
-//         else {
-//             res.status(200).json({
-//                 data: note,
-//                 success: true,
-//                 message: "No notes exist in the record"
-//             })
-//         }
-//     }
-//     catch (error) {
-//         console.log(error)
-//         res.status(404).json({
-//             success: false
-//         })
-//     }
-// }
-
-
 //show note by id 
 export const showNoteById = async (req, res) => {
     try {
