@@ -1,1 +1,0 @@
-I have these two files,Notes_Main_Page and AddNoteModal. I am calling the AddNoteModal component to the main file. Now, on adding a note, at first the note is added and displayed immediately (I am assuming because the refresh value is updated and it causes a re-render to the useEffect function on Notes_Main_Page)

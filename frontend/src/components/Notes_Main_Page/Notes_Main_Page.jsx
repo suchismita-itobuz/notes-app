@@ -24,7 +24,6 @@ export default function NotesMainPage() {
   const [max_limit, setMax_limit] = useState(null)
   const [refresh, setRefresh] = useState(false)
   const [search_query,setSearch_Query] = useState("")
-  const [userID,setUserID] = useState(null)
 
   const token = localStorage.getItem("accessToken");
 
