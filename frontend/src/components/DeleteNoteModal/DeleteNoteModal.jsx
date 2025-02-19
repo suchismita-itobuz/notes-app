@@ -1,39 +1,39 @@
-import {Button,Modal } from "flowbite-react";
-import {Trash2} from "lucide-react"
+import { Button, Modal } from "flowbite-react";
+import { Trash2 } from "lucide-react"
 import { useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import axios from "axios";
+import { axiosInstance } from "../../helper/axiosInstance";
 
 
 "use client";
 
-export default function DeleteNoteModal({id,setRefresh,refresh}) {
-    const token = localStorage.getItem("accessToken");
-    const [openModal, setOpenModal] = useState(false);
-    const [del, setDel] = useState(false)
+export default function DeleteNoteModal({ id, setRefresh, refresh }) {
+  const token = localStorage.getItem("accessToken");
+  const [openModal, setOpenModal] = useState(false);
+  const [del, setDel] = useState(false)
 
 
-    const deletenote = async() => {
-        try{
-            setOpenModal(false)
-            setRefresh(true)
-            const response = await axios({
-                url:`http://localhost:4000/notes/deleteNote/${id}`,
-                headers: { Authorization: `Bearer ${token}` },
-                method: "DELETE"
-            })
-            console.log(response)
-        }
-        catch(error){
-            console.log(error)
-        }
-      }
-   
+  const deletenote = async () => {
+    try {
+      setOpenModal(false)
+      setRefresh(true)
+      const response = await axiosInstance({
+        url: `/deleteNote/${id}`,
 
-       
+        method: "DELETE"
+      })
+      console.log(response)
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+
+
   return (
     <>
-      <button onClick={() => setOpenModal(true)}><Trash2/></button>
+      <button onClick={() => setOpenModal(true)}><Trash2 /></button>
       <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
         <Modal.Header />
         <Modal.Body>

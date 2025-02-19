@@ -3,16 +3,18 @@ import notes from "../models/noteSchema.js"
 //create a note 
 export const createNote = async (req, res) => {
     try {
+        const userID = req.id
         const { title, content } = req.body;
-        const flag = await notes.findOne({ title })
-        if (flag) {
+        const flag = await notes.find({ userID,title })
+        console.log("flag",flag)
+        if (flag.length>0) {
             return res.status(404).json({
                 success: false,
                 message: "note with same title exists",
 
             })
         }
-        const note = await notes.create({ title, content, userID: `${req.id}` })
+        const note = await notes.create({ title, content, userID })
         console.log("note", note)
 
         res.status(200).json({

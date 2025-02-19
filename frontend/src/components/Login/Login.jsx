@@ -81,6 +81,9 @@ export default function Login() {
       
       localStorage.setItem("accessToken",response.data.data.token)
       localStorage.setItem("refreshToken",response.data.data.refresh_token)
+      console.log("Access Token:", localStorage.getItem("accessToken"));
+      console.log("Refresh Token:", localStorage.getItem("refreshToken"));
+
       setValidUserError("valid");
 
      

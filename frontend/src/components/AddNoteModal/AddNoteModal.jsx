@@ -13,6 +13,7 @@ import axios from "axios";
 
 import { Button, Modal } from "flowbite-react";
 import { useState } from "react";
+import { axiosInstance } from '../../helper/axiosInstance';
 
 export default function AddNoteModal({refresh,setRefresh}) {
 
@@ -52,7 +53,7 @@ export default function AddNoteModal({refresh,setRefresh}) {
         }
       }
 
-    const token = localStorage.getItem("accessToken");
+    
     const [openModal, setOpenModal] = useState(false);
     const [error,setError] = useState(false)
     const {
@@ -68,9 +69,8 @@ export default function AddNoteModal({refresh,setRefresh}) {
         
         try {
             
-            const response = await axios({
-                url: `http://localhost:4000/notes/addNote`,
-                headers: { Authorization: `Bearer ${token}` },
+            const response = await axiosInstance({
+                url: `/addNote`,
                 method: "POST",
                 data: data,
             });

@@ -105,7 +105,7 @@ export const loginUser = async (req, res) => {
                 const userID = loginUserDetails._id;
 
                         //generation of access token AND refresh token
-                        const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '30d' });
+                        const token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '10m' });
                         const refresh_token = jwt.sign({ userID }, process.env.MY_SECRET_KEY, { expiresIn: '30d' });
         
                         await loginUserDetails.save()

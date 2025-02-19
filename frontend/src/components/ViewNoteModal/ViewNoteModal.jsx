@@ -1,7 +1,7 @@
 import { Modal } from "flowbite-react";
 import { Eye, Link } from "lucide-react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { axiosInstance } from "../../helper/axiosInstance";
 
 "use client";
 
@@ -15,9 +15,8 @@ export default function ViewNoteModal({ id }) {
   useEffect(() => {
     const viewnote = async () => {
       try {
-        const response = await axios({
-          url: `http://localhost:4000/notes/ShowNoteByID/${id}`,
-          headers: { Authorization: `Bearer ${token}` },
+        const response = await axiosInstance({
+          url: `/ShowNoteByID/${id}`,
           method: "GET",
         });
         console.log(response);

@@ -4,7 +4,7 @@ import { Button, Modal } from "flowbite-react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { note_validation_schema } from "../../validation/dataValidation";
-import axios from "axios";
+import { axiosInstance } from '../../helper/axiosInstance';
 
 export default function UpdateNoteModal({id,refresh,setRefresh}) {
 
@@ -45,9 +45,8 @@ export default function UpdateNoteModal({id,refresh,setRefresh}) {
     const submitForm = async (data) => {
         console.log("data", data);
         try {
-            const response = await axios({
-                url: `http://localhost:4000/notes/updateNote/${id}`,
-                headers: { Authorization: `Bearer ${token}` },
+            const response = await axiosInstance({
+                url: `/updateNote/${id}`,
                 method: "POST",
                 data: data,
             });

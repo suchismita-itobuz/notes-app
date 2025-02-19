@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 const noteSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
     },
     content: {
         type: String
@@ -11,7 +10,6 @@ const noteSchema = new mongoose.Schema({
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User_details",
-        // required:true
     },
     filePath: {
         type: String,

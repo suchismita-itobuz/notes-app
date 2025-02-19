@@ -4,57 +4,55 @@ import session from "../models/sessionSchema.js";
 export const verifyAuthorisation = async (req, res, next) => {
     //from headers take in the auth token and decode 
     const authHeader = req.headers.authorization;
-  
+
     if (authHeader && authHeader.startsWith("Bearer")) {
-        const token = authHeader.split(" ")[1]
-      
+        const token = authHeader.split(" ")[1];
+
         try {
-            let decoded = jwt.verify(token, `${process.env.MY_SECRET_KEY}`)
-            // console.log("userID", decoded)
-            req.id = decoded.userID
-            //req.id will go to the next function
-            console.log("Verify Middleware is working for this user", decoded.userID)
-            //here session is checked if active or not 
-            const userID = decoded.userID
-            try {
-                const flag = await session.findOne({ userID: `${userID}` })
-                // console.log("flag", flag)
-                if (flag === null) {
-                    throw Error
-                }
-                next()
-            }
-            catch (error) {
+            let decoded = jwt.verify(token, `${process.env.MY_SECRET_KEY}`);
+            req.id = decoded.userID;
+            console.log("Verify Middleware is working for this user", decoded.userID);
+
+            // Check if session exists
+            const userID = decoded.userID;
+            const flag = await session.findOne({ userID: userID });
+
+            if (!flag) {
                 return res.status(403).json({
                     success: false,
-                    message: "You are not logged in. Please log in."
-                })
+                    message: "You are not logged in. Please log in.",
+                });
             }
 
-        }
+            next(); // Move to next middleware
+        } 
         catch (error) {
-            // console.log(error.message)
-            if (error && error.message === "jwt expired") {
+            console.error("JWT Verification Error:", error.message);
+
+            if (error.message === "jwt expired") {
                 return res.status(403).json({
                     success: false,
-                    message: "Token has expired {API is called from where it is resent}"
-                })
+                    message: "Token has expired",
+                });
+            } 
+            else if (error.message === "invalid signature") {
+                return res.status(401).json({
+                    success: false,
+                    message: "Token is invalid",
+                });
+            } 
+            else {
+                return res.status(401).json({
+                    success: false,
+                    message: "Authorization failed",
+                });
             }
-            else (error && error.message === "invalid signature")
-            return res.status(401).json({
-                success: false,
-                message: "Token is invalid"
-            })
-
         }
-
-    }
+    } 
     else {
         return res.status(404).json({
             success: false,
             message: "Token wasn't present in headers",
-        })
+        });
     }
-}
-
-
+};

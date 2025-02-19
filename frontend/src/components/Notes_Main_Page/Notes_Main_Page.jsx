@@ -10,6 +10,7 @@ import DeleteNoteModal from "../DeleteNoteModal/DeleteNoteModal.jsx";
 import UpdateNoteModal from "../UpdateNoteModal/UpdateNoteModal.jsx";
 import Logout from "../Logout/Logout.jsx";
 import FileUpload from "../FileUpload/FileUpload.jsx";
+import { axiosInstance } from "../../helper/axiosInstance.js";
 
 
 export default function NotesMainPage() {
@@ -24,23 +25,20 @@ export default function NotesMainPage() {
   const [max_limit, setMax_limit] = useState(null)
   const [refresh, setRefresh] = useState(false)
   const [search_query,setSearch_Query] = useState("")
-
-  const token = localStorage.getItem("accessToken");
+  const [userID,setUserID] = useState("")
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/notes/getUser", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axiosInstance.get("/getUser")
         setFname(response.data.data.user[0].fname);
         setUserID(response.data.data.user[0]._id)
       } catch (error) {
         console.error(error);
       }
     };
-    if (token) fetchUser();
-  }, [token]);
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     setUpdatedPageNum(pageNum - 1)
@@ -49,9 +47,7 @@ export default function NotesMainPage() {
 
   const fetchNotes = async (search_query) => {
     try {
-      const response = await axios.post(`http://localhost:4000/notes/ShowAllNotes?sortBy=${sortBy}&pageNum=${UpdatedPageNum}`, { search_query: search_query }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axiosInstance.post(`/ShowAllNotes?sortBy=${sortBy}&pageNum=${UpdatedPageNum}`, { search_query });
       setResult(response.data.data.note);
       setMax_limit(response.data.data.max_limit);
       console.log(response.data.data.max_limit)
@@ -62,8 +58,8 @@ export default function NotesMainPage() {
   };
 
   useEffect(() => {
-    if (token) fetchNotes(search_query);
-  }, [token, sortBy, UpdatedPageNum, refresh,search_query]);
+    fetchNotes(search_query);
+  }, [sortBy, UpdatedPageNum, refresh,search_query]);
 
 
   useEffect(() => {
