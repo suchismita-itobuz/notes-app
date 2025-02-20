@@ -1,4 +1,5 @@
 import notes from "../models/noteSchema.js"
+import chatHistory from "../models/ChatSchema.js"
 
 //create a note 
 export const createNote = async (req, res) => {
@@ -170,6 +171,16 @@ export const updateNote = async (req, res) => {
         res.status(404).json({
             message: "Cannot fetch data",
         })
+    }
+}
+
+export const chat = async(fname,message) => {
+    try{
+        const chatHistory_instance = await chatHistory.create({fname,message})
+        console.log(chatHistory_instance)
+    }
+    catch(error){
+        console.log(error)
     }
 }
 

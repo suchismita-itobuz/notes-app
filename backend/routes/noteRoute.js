@@ -6,20 +6,20 @@ import { validate } from "../middleware/validateData.js";
 import { resendAccessToken } from "../helper/resendAccessToken.js"
 import { upload, uploadNotes } from "../multerConfig.js";
 import { getUser } from "../helper/getUser.js";
-
+import { getAllUsers } from "../helper/getAllUsers.js";
 
 
 
 const noteRoute = express.Router();
 
 noteRoute.get("/getUser",verifyAuthorisation,getUser)
+noteRoute.get("/getAllUsers",verifyAuthorisation,getAllUsers)
 noteRoute.post("/addNote",verifyAuthorisation,validate(note_validation_schema),createNote);
 noteRoute.post("/ShowAllNotes",verifyAuthorisation,showSortedNote);
 noteRoute.get("/ShowNoteByID/:id",verifyAuthorisation,showNoteById)
 noteRoute.delete("/deleteNote/:id",verifyAuthorisation,deleteNote);
 noteRoute.post("/updateNote/:id",verifyAuthorisation,validate(note_validation_schema),updateNote);
 noteRoute.get("/generateNewToken",resendAccessToken)
-// noteRoute.post("/search",verifyAuthorisation,searchNote)
 noteRoute.post("/upload/:id",verifyAuthorisation,upload.single("filePath"),uploadNotes)
 
 

@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Menu, X, ChevronRight, ChevronLeft } from "lucide-react";
 import navbarLogo from "../../assets/book.png";
 import man from "../../assets/man.jpg";
-import axios from "axios";
 import AddNoteModal from "../../components/AddNoteModal/AddNoteModal.jsx";
 import ViewNoteModal from "../../components/ViewNoteModal/ViewNoteModal.jsx"
 import DeleteNoteModal from "../DeleteNoteModal/DeleteNoteModal.jsx";
@@ -11,6 +10,7 @@ import UpdateNoteModal from "../UpdateNoteModal/UpdateNoteModal.jsx";
 import Logout from "../Logout/Logout.jsx";
 import FileUpload from "../FileUpload/FileUpload.jsx";
 import { axiosInstance } from "../../helper/axiosInstance.js";
+import Chat from "../Chat/Chat.jsx";
 
 
 export default function NotesMainPage() {
@@ -187,7 +187,7 @@ export default function NotesMainPage() {
           </div>
           <div className="flex justify-center items-center text-green-600"><button onClick={Previous_page} disabled={leftdisablebtn}><ChevronLeft /></button>{pageNum}<button onClick={Next_page} disabled={rightdisablebtn}><ChevronRight /></button></div>
         </div>
-
+        <Chat/>
       </div>
 
     </>

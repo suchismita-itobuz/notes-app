@@ -5,10 +5,11 @@ import {Routes,Route}from "react-router-dom"
 import Verify from './components/User_Verification/Verify.jsx'
 import NotesMainPage from './components/Notes_Main_Page/Notes_Main_Page.jsx'
 import Not_found from './components/Not_found/Not_found.jsx'
+import io from 'socket.io-client'
+import ChatRoom from './components/ChatRoom/ChatRoom.jsx'
 
 
-
-
+const socket = io.connect(`http://localhost:4000/`)
 
 export default function App() {
   
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/login" element={<><Navbar/><Login/></>}></Route>
             <Route path="/Notes" element={<NotesMainPage/>}></Route>
             <Route path="/not-found" element={<><Navbar/><Not_found/></>}></Route>
+            <Route path="/chatRoom" element={<><Navbar/><ChatRoom socket={socket}/></>}></Route>
         </Routes>
         </div>
    </>

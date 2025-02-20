@@ -3,10 +3,6 @@ import React from 'react'
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { note_validation_schema } from "../../validation/dataValidation";
-import axios from "axios";
-
-
-
 
 
 "use client";

@@ -19,6 +19,11 @@ export const note_validation_schema = yup.object({
 })
 
 
+export const message_validation_schema = yup.object({
+    message:yup.string().trim().min(1,"Message cannot be empty")
+})
+
+
 
 
 
