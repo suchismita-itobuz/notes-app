@@ -2,7 +2,7 @@ import React from 'react'
 import { MessageCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export default function Chat() {
+export default function ChatIcon() {
     const navigate = useNavigate();
     async function chatRoom(){
         navigate("/chatRoom")

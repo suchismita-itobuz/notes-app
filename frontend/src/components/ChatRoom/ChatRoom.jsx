@@ -1,139 +1,178 @@
 // import React, { useEffect, useState } from 'react'
-// import { message_validation_schema } from '../../validation/dataValidation';
-// import { yupResolver } from "@hookform/resolvers/yup";
-// import { useForm } from "react-hook-form";
 // import { axiosInstance } from '../../helper/axiosInstance';
+// import { MessageCircle } from 'lucide-react';
+// import ChatModal from '../ChatModal.jsx/ChatModal';
 
-// export default function ChatRoom({socket}) {
 
-//     const [message,setMessage] = useState("")
-//     const [chathistory,setChathistory] = useState("")
-//     const [fname, setFname] = useState("");
+
+// export default function ChatRoom({ socket }) {
+
+//     const [openModal, setOpenModal] = useState(false);
+//     const [result, setResult] = useState("")
+//     const [reciever_id,setReciever_id] = useState("")
+//     const [fname,setFname] = useState("")
+//     const [sender_id,setSender_id] = useState("")
+
+//     const messages = [
+//         { sender: "me", text: "Hey! How's it going?" },
+//         { sender: "receiver", text: "Hey! I'm good, how about you?" },
+//         { sender: "me", text: "Doing well! Just working on my project." },
+//         { sender: "receiver", text: "That sounds great! What are you building?" },
+//         { sender: "me", text: "A notes app with real-time messaging. 🚀" },
+//         { sender: "receiver", text: "Wow, that’s awesome! Keep going! 💪" }
+//       ];
+
+    
+
+//     useEffect(() => {
+//         const fetchUsers = async () => {
+//             try {
+//                 const response = await axiosInstance.get("/getAllUsers")
+//                 setResult(response)
+
+//             }
+//             catch (error) {
+//                 console.error(error)
+//             }
+//         }
+//         fetchUsers()
+//     }, [])
 
 
 //     useEffect(() => {
-//         const fetchUser = async () => {
-//           try {
-//             const response = await axiosInstance.get("/getUser")
-//             setFname(response.data.data.user[0].fname);
+//         console.log(result.data ? result.data.data.all_users.length : "")
+//         result.data ?  setSender_id(result.data.sender_id.userID) : "" //found sender_id here 
+//     }, [result])
 
-//           } catch (error) {
-//             console.error(error);
-//           }
-//         };
-//         fetchUser();
-//       }, []);
-
-
-//     useEffect(()=>{
-//         socket.emit("send_message",{message,fname})
-//     },[message])
-
-
-//     useEffect(()=>{
-//         socket.on("receive_message",(data)=>{
-//             alert(fname)
-//             console.log(data.message.message)
-//             setChathistory(data)
-//         })
-//     },[socket])
-
-//      const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },reset
-//   } = useForm({
-//     resolver: yupResolver(message_validation_schema),
-//   });
-
-//   const submitForm = async (data) => {
-//     try {
-//         setMessage(data)
-//         reset()
-//     } catch (error) {
-//         console.log(error)
+//     //this function will always run after result value comes so sender id will be available
+    
+//     function startChat(reciever_id,fname){
+//         console.log(reciever_id)//here only room joining needs to be done 
+//         setReciever_id(reciever_id)
+//         setFname(fname)
+//         setOpenModal(true)  
+//         const roomID = [sender_id,reciever_id].sort().join("_")
+//         socket.emit("joinRoom",{sender_id,reciever_id})
 //     }
-//   };
 
-//   return (
-//     <form
-//     onSubmit={handleSubmit(submitForm)}
-//     className=" w-[300px] first_bp:w-[350px] second_bp:w-[400px] md:[w-743px] bg-[#FFD689] rounded shadow-xl p-[20px] m-[50px] md:mt-[20px] lg:mt-[20px]"
-//   >
-//     <h3 className="text-lg text-center mb-[20px] font-bold text-amber-700 md:text-2xl">
-//      Chat
-//     </h3>
-//     <div className="flex flex-col mb-[20px]">
-//       <label className="mb-[10px] text-md md:text-xl">Your Message:</label>
-//       <input
-//         type="textarea"
-//         name="message"
-//         className="rounded px-[10px] py-[5px] text-xs md:text-lg"
-//         {...register("message")}
-//       />
-//     </div>
-//     <div className="flex mb-[20px] justify-center">
-//       <button className="text-md md:text-lg bg-amber-500 hover:bg-amber-700 hover:text-white p-[5px] px-[10px] rounded lg:mt-[20px]">
-//         Submit
-//       </button>
-//     </div>
-//   </form>
-//   )
+
+
+//     return (
+//         <div className="p-[50px] flex flex-col flex-wrap justify-center">
+//             <h2 className='text-center text-xl font-bold mb-5'>List of all users</h2>
+//             {result.data && result.data.data.all_users.length > 0 ? (
+//                 result.data.data.all_users.map((data) => (
+//                     <div key={data._id} className="flex bg-amber-300 hover:bg-amber-400 cursor-pointer p-4 mb-4 rounded-md shadow-md relative " onClick={()=>{startChat(data._id,data.fname)}}>
+//                         <h2 className="text-lg font-semibold">Name: {data.fname}</h2>
+//                         <MessageCircle className='absolute right-[20px]'/>
+//                     </div>
+//                 ))
+//             ) : (
+//                 <div className="text-sm min-w-[100px] md:text-lg font-semibold text-gray-700">
+//                     No users exist
+//                 </div>
+//             )}
+//             {
+//                 openModal && <ChatModal setOpenModal={setOpenModal} openModal={openModal} messages={messages} receiverName={fname}/>
+//             }
+
+//         </div>
+//     )
 // }
 
 
-
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../helper/axiosInstance';
 import { MessageCircle } from 'lucide-react';
-
-
+import ChatModal from '../ChatModal/ChatModal.jsx';
 
 export default function ChatRoom({ socket }) {
-
-
-    const [result, setResult] = useState("")
-
-    function startChat(id){
-        console.log(id)
-    }
-
+    const [openModal, setOpenModal] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [receiverID, setReceiverID] = useState("");
+    const [receiverName, setReceiverName] = useState("");
+    const [senderID, setSenderID] = useState("");
+    const [roomID, setRoomID] = useState("");
+    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axiosInstance.get("/getAllUsers")
-                setResult(response)
+                const response = await axiosInstance.get("/getAllUsers");
+                setUsers(response.data.data.all_users);
+                setSenderID(response.data.sender_id.userID); // Set sender ID
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchUsers();
+    }, []);
+
+    const startChat = async (receiverID, receiverName) => {
+        setReceiverID(receiverID);
+        setReceiverName(receiverName);
+        setOpenModal(true);
+
+        const generatedRoomID = [senderID, receiverID].sort().join("_");
+        console.log("roomid",generatedRoomID)
+        setRoomID(generatedRoomID);
+        socket.emit("joinRoom", { senderID, receiverID });
+
+        // Fetch existing messages for this room
+        try {
+            const response = await axiosInstance.get(`/GetChatHistory/${generatedRoomID}`);
+            if(response){
+            setMessages(response.data.messages); 
+            }
+            else{
 
             }
-            catch (error) {
-                console.error(error)
-            }
+        } catch (error) {
+            console.error("Error fetching messages:", error);
         }
-        fetchUsers()
-    }, [])
-
+    };
 
     useEffect(() => {
-        console.log(result.data ? result.data.data.all_users.length : "")
-    }, [result])
+        socket.on("receive_message", (newMessage) => {
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+        });
+
+        return () => {
+            socket.off("receive_message");
+        };
+    }, [socket]);
 
     return (
         <div className="p-[50px] flex flex-col flex-wrap justify-center">
             <h2 className='text-center text-xl font-bold mb-5'>List of all users</h2>
-            {result.data && result.data.data.all_users.length > 0 ? (
-                result.data.data.all_users.map((data, i) => (
-                    <div key={data._id} className="flex bg-amber-300 hover:bg-amber-400 cursor-pointer p-4 mb-4 rounded-md shadow-md relative " onClick={()=>{startChat(data._id)}}>
-                        <h2 className="text-lg font-semibold">Name: {data.fname}</h2>
+            {users.length > 0 ? (
+                users.map((user) => (
+                    <div 
+                        key={user._id} 
+                        className="flex bg-amber-300 hover:bg-amber-400 cursor-pointer p-4 mb-4 rounded-md shadow-md relative" 
+                        onClick={() => startChat(user._id, user.fname)}
+                    >
+                        <h2 className="text-lg font-semibold">Name: {user.fname}</h2>
                         <MessageCircle className='absolute right-[20px]'/>
                     </div>
                 ))
             ) : (
                 <div className="text-sm min-w-[100px] md:text-lg font-semibold text-gray-700">
-                    No notes exist
+                    No users exist
                 </div>
             )}
-
+            {openModal && (
+                <ChatModal 
+                    setOpenModal={setOpenModal} 
+                    openModal={openModal} 
+                    messages={messages} 
+                    senderID={senderID} 
+                    roomID={roomID} 
+                    receiverName={receiverName} 
+                    socket={socket} 
+                />
+            )}
         </div>
-    )
+    );
 }
+

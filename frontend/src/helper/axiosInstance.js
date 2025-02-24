@@ -19,13 +19,11 @@ axiosInstance.interceptors.request.use(
 const refreshAccessToken = async () => {
     try {
         const refreshToken = localStorage.getItem("refreshToken");
-
         if (!refreshToken) {
-          
             return null;
         }
 
-      
+
 
         const res = await axios.get("http://localhost:4000/notes/generateNewToken", {
             headers: { Authorization: `Bearer ${refreshToken}` },
@@ -34,17 +32,17 @@ const refreshAccessToken = async () => {
         if (res.status === 200) {
             const newAccessToken = res.data.data.token;
             const newRefreshToken = res.data.data.rtoken
-          
+
 
             localStorage.setItem("accessToken", newAccessToken);
-            localStorage.setItem("refreshToken",newRefreshToken)
-            return {newAccessToken,newRefreshToken};
+            localStorage.setItem("refreshToken", newRefreshToken)
+            return { newAccessToken, newRefreshToken };
         }
     } catch (error) {
-       
+
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/login"; 
+        window.location.href = "/login";
         return null;
     }
 };
@@ -52,32 +50,30 @@ const refreshAccessToken = async () => {
 axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
-        
+
 
         const originalRequest = error.config;
 
         if (error.response?.status === 403 && error.response.data?.message === "Token has expired") {
             if (originalRequest._retry) {
-              
+
                 return Promise.reject(error);
             }
 
             originalRequest._retry = true;
-           
-
             const newTokens = await refreshAccessToken();
 
             if (newTokens?.newAccessToken) {
-               
+
                 originalRequest.headers["Authorization"] = `Bearer ${newTokens.newAccessToken}`;
-                return axiosInstance(originalRequest); 
+                return axiosInstance(originalRequest);
             }
-        } 
+        }
         else if (error.response?.status === 401) {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             window.location.href = "/login";
-        } 
+        }
         else if (error.response?.status === 404 && error.response.data?.message === "Token wasn't present in headers") {
             window.location.href = "/not-found";
         }

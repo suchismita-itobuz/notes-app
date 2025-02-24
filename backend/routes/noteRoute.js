@@ -7,6 +7,7 @@ import { resendAccessToken } from "../helper/resendAccessToken.js"
 import { upload, uploadNotes } from "../multerConfig.js";
 import { getUser } from "../helper/getUser.js";
 import { getAllUsers } from "../helper/getAllUsers.js";
+import {fetchMessagesByRoomId} from "../controllers/messageController.js"
 
 
 
@@ -21,6 +22,7 @@ noteRoute.delete("/deleteNote/:id",verifyAuthorisation,deleteNote);
 noteRoute.post("/updateNote/:id",verifyAuthorisation,validate(note_validation_schema),updateNote);
 noteRoute.get("/generateNewToken",resendAccessToken)
 noteRoute.post("/upload/:id",verifyAuthorisation,upload.single("filePath"),uploadNotes)
+noteRoute.get("/GetChatHistory/:roomID",verifyAuthorisation, fetchMessagesByRoomId)
 
 
 

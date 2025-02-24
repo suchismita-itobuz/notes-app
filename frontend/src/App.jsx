@@ -18,6 +18,7 @@ export default function App() {
         <div className='bg-[#FEF0D7] min-h-screen flex flex-col'>
         <Routes>
             <Route path='/' element= {<><Navbar/><Signup/></>}></Route>
+            {/* <Route path='/test' element= {<ChatModal/>}></Route> */}
             <Route path="/verify/:token" element={<><Navbar/><Verify/></>}></Route>
             <Route path="/login" element={<><Navbar/><Login/></>}></Route>
             <Route path="/Notes" element={<NotesMainPage/>}></Route>
